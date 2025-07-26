@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DDNS API 使用說明</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('/img/background.png');
+            background-size: cover;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            background: white;
+            padding: 20px;
+            background-color: rgba(255,255,255,0.95);
+            box-shadow: 0 0 10px rgba(0,0,0,0.12);
+            border-radius: 8px;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+        h2 {
+            color: #000;
+            animation: fadeInDown 1s ease-in-out;
+        }
+        p, li {
+            line-height: 1.6;
+            color: #666;
+        }
+        ul li {
+            margin-bottom: 6px;
+        }
+        code, pre {
+            background: #f5f5f5;
+            color: #222;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 1em;
+        }
+        pre {
+            display: block;
+            padding: 12px;
+            margin: 16px 0;
+            overflow-x: auto;
+        }
+        ul {
+            margin-left: 1.5em;
+        }
+        a {
+            color: #ffbf00;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        a:hover {
+            color: #333;
+        }
+        img {
+            box-shadow: 0 2px 8px #0001;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div style="text-align:center;margin-bottom:20px;">
+            <button onclick="window.location.href='/docs'" style="padding:8px 24px;font-size:1.1em;border-radius:6px;border:none;background:#ffbf00;color:#222;cursor:pointer;box-shadow:0 2px 8px #0001;transition:background 0.2s;">返回目錄</button>
+        </div>
+        <h1>更新網域（DDNS）API 說明</h1>
+        <p>本頁說明如何使用 API 來更新你的動態網域（DDNS）。</p>
+
+        <h2>更新網域（DDNS）</h2>
+        <ul>
+            <li><b>指定更新 IP：</b><br>
+                <pre>curl "https://taiwanfrp.ddns.net/api/ddns_update?username=你的帳號&password=你的密碼&domain=你的網域&ip=想更新的IP"</pre>
+                <span style="color:#666">直接將「你的網域」的 IP 更新為「想更新的IP」。</span>
+            </li>
+            <li><b>自動更新（更新成發送請求的電腦 IP）：</b><br>
+                <pre>curl "https://taiwanfrp.ddns.net/api/ddns_update?username=你的帳號&password=你的密碼&domain=你的網域"</pre>
+            </li>
+        </ul>
+
+        <h2>網頁版 DDNS 自動更新工具</h2>
+        <p>你可以使用圖形化的 DDNS 自動更新工具，定期自動將你的網域 IP 更新到最新。</p>
+        <ul>
+            <li>填寫 <b>帳號</b>、<b>密碼</b>、<b>網域</b>（預設自動補 .taiwanfrp.me），<b>IP</b> 可選填（不填則自動偵測）。</li>
+            <li>可選擇自動更新的間隔時間（1~60分鐘）。</li>
+            <li>按下「立即更新」可手動觸發一次更新。</li>
+            <li>每次更新後會顯示伺服器回應與結果。</li>
+        </ul>
+        <p>工具位置：<br>
+        <a href="/updateddns.html" target="_blank">updateddns.html</a></p>
+        <p>使用範例畫面：</p>
+        <img src="/img/ddns_example.png" alt="DDNS自動更新工具範例" style="max-width:100%;border:1px solid #ccc;border-radius:6px;box-shadow:0 2px 8px #0001;">
+    </div>
+</body>
+</html>

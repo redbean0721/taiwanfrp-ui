@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TAIWANFRP - TaiwanFRP文檔</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url('/img/background.png');
+            background-size: cover;
+            color: #fff;
+            overflow-x: hidden;
+        }
+        .container {
+            max-width: 700px;
+            margin: 60px auto;
+            background: rgba(255,255,255,0.97);
+            border-radius: 10px;
+            box-shadow: 0 0 12px rgba(0,0,0,0.13);
+            padding: 32px 28px 28px 28px;
+        }
+        h1 {
+            text-align: center;
+            color: #222;
+            margin-bottom: 32px;
+        }
+        ul.index-list {
+            list-style: none;
+            padding: 0;
+        }
+        ul.index-list li {
+            margin: 18px 0;
+            font-size: 1.18em;
+            background: #f5f5f5;
+            border-radius: 6px;
+            box-shadow: 0 1px 4px #0001;
+            padding: 16px 18px;
+            transition: background 0.2s;
+        }
+        ul.index-list li:hover {
+            background: #ffe9b3;
+        }
+        a {
+            color: #ffbf00;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        a:hover {
+            color: #333;
+        }
+        .desc {
+            color: #666;
+            font-size: 0.98em;
+            margin-top: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>TaiwanFRP文檔</h1>
+        <div style="text-align:center;margin-bottom:32px;">
+            <a href="/" style="display:inline-block;padding:12px 32px;background:#ffbf00;color:#222;border-radius:6px;font-weight:bold;font-size:1.1em;box-shadow:0 1px 4px #0001;transition:background 0.2s;">返回主畫面</a>
+        </div>
+        <ul class="index-list">
+            <li>
+                <a href="ddns_api.html">DDNS API 使用說明</a>
+                <div class="desc">如何使用 API 及網頁工具來更新你的動態網域（DDNS）。</div>
+            </li>
+            <li>
+                <a href="node_domain_api.html">更新/刪除/新增/編輯網域API說明(TaiwanFRP開發小隊專用文檔)</a>
+                <div class="desc">如何使用 API 創建新的A跟CNAME或是SRV紀錄。</div>
+            </li>
+        </ul>
+    </div>
+</body>
+</html>

@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>更新/刪除/新增/編輯網域API說明</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('/img/background.png');
+            background-size: cover;
+            color: #222;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 900px;
+            margin: 50px auto;
+            background: white;
+            padding: 24px;
+            background-color: rgba(255,255,255,0.97);
+            box-shadow: 0 0 12px rgba(0,0,0,0.13);
+            border-radius: 10px;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #222;
+        }
+        h2 {
+            color: #222;
+            animation: fadeInDown 1s ease-in-out;
+        }
+        p, li {
+            line-height: 1.7;
+            color: #222;
+        }
+        ul li {
+            margin-bottom: 8px;
+        }
+        code, pre {
+            background: #f5f5f5;
+            color: #222;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 1em;
+        }
+        pre {
+            display: block;
+            padding: 12px;
+            margin: 16px 0;
+            overflow-x: auto;
+        }
+        ul {
+            margin-left: 1.5em;
+        }
+        a {
+            color: #ffbf00;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        a:hover {
+            color: #222;
+        }
+        img {
+            box-shadow: 0 2px 8px #0001;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .api-section {
+            margin-bottom: 36px;
+        }
+        .table-wrap {
+            overflow-x: auto;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 12px 0;
+            background: #fafafa;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px 10px;
+            text-align: left;
+            color: #222;
+        }
+        th {
+            background: #eee;
+            color: #222;
+        }
+        .notice {
+            background: #fffbe6;
+            color: #b36b00;
+            border-left: 4px solid #ffbf00;
+            padding: 8px 16px;
+            margin: 12px 0;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div style="text-align:center;margin-bottom:20px;">
+            <button onclick="window.location.href='/docs'" style="padding:8px 24px;font-size:1.1em;border-radius:6px;border:none;background:#ffbf00;color:#222;cursor:pointer;box-shadow:0 2px 8px #0001;transition:background 0.2s;">返回目錄</button>
+        </div>
+        <h1>更新/刪除/新增/編輯網域API說明</h1>
+        <p style="text-align:center;">本頁整理所有節點網域相關 API，包含創建、查詢、刪除 SRV/A/CNAME 記錄，適用於 Minecraft 及一般網域。</p>
+
+        <div class="api-section">
+            <h2>/node_add_domain 新增/編輯網域</h2>
+            <div class="table-wrap">
+            <table>
+                <tr>
+                    <th>參數</th><th>類型</th><th>必填</th><th>說明</th>
+                </tr>
+                <tr>
+                    <td>username</td><td>string</td><td>是</td><td>使用者帳號（登入驗證用，必須是已註冊帳號）</td>
+                </tr>
+                <tr>
+                    <td>password</td><td>string</td><td>是</td><td>使用者密碼（登入驗證用，請妥善保管）</td>
+                </tr>
+                <tr>
+                    <td>node</td><td>string</td><td>SRV 必填</td><td>節點名稱（必須是你自己擁有的節點，SRV 記錄的目標 IP 會自動從該節點取得，不能自訂）</td>
+                </tr>
+                <tr>
+                    <td>srv_domain</td><td>string</td><td>SRV 必填</td><td>申請的子網域（如：kiwiidgood，系統自動補全完整 SRV 名稱）</td>
+                </tr>
+                <tr>
+                    <td>srv_port</td><td>number</td><td>否</td><td>指定端口（Minecraft 伺服器的連接埠，預設 25565，可自訂）</td>
+                </tr>
+                <tr>
+                    <td>srv_priority</td><td>number</td><td>否</td><td>SRV 優先權（數值越小優先度越高，通常填 0）</td>
+                </tr>
+                <tr>
+                    <td>srv_weight</td><td>number</td><td>否</td><td>SRV 權重（多個 SRV 記錄時分流用，預設 5，數值越大分流機率越高）</td>
+                </tr>
+                <tr>
+                    <td>nodeName</td><td>string</td><td>A/CNAME 必填</td><td>節點名稱（你要操作的伺服器節點，必須是你自己擁有的節點，例：台北中華電信）</td>
+                </tr>
+                <tr>
+                    <td>connect_addr</td><td>string</td><td>A/CNAME 必填</td><td>目標 IP 或域名（A 記錄填 IP，CNAME 記錄填域名，指向你要綁定的主機）</td>
+                </tr>
+                <tr>
+                    <td>custom_domain</td><td>string</td><td>A/CNAME 必填</td><td>申請的子網域（如：kiwiidgood，系統自動補全完整網域）</td>
+                </tr>
+            </table>
+            </div>
+            <div class="notice">
+                <b>注意：</b> SRV 記錄的目標（target）會自動使用你指定 <code>node</code> 節點的 IP，不能自訂。SRV 記錄會建立於 <code>_minecraft._tcp.&lt;srv_domain&gt;.taiwanfrp.me</code>。一個節點同時只能有一個網域（A/CNAME 或 SRV），新申請會自動覆蓋舊的。只有節點擁有者可操作該節點的網域。
+            </div>
+            <b>SRV 範例：</b>
+            <pre>
+curl -X POST https://taiwanfrp.ddns.net/node_add_domain \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "你的帳號",
+    "password": "你的密碼",
+    "node": "台北中華電信",
+    "srv_domain": "你的子網域",
+    "srv_port": 25566,
+    "srv_priority": 0,
+    "srv_weight": 5
+  }'
+            </pre>
+            <b>A/CNAME 範例：</b>
+            <pre>
+curl -X POST https://taiwanfrp.ddns.net/node_add_domain \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "你的帳號",
+    "password": "你的密碼",
+    "nodeName": "TaiwanFRP節點名稱",
+    "connect_addr": "目標IP或域名",
+    "custom_domain": "你的子網域"
+  }'
+            </pre>
+            <b>成功回應：</b>
+            <pre>網域已新增/更新並同步到 Cloudflare</pre>
+        </div>
+
+        <div class="api-section">
+            <h2>/node_del_domain 刪除網域</h2>
+            <div class="table-wrap">
+            <table>
+                <tr>
+                    <th>參數</th><th>類型</th><th>必填</th><th>說明</th>
+                </tr>
+                <tr>
+                    <td>node</td><td>string</td><td>SRV 必填</td><td>要刪除 SRV 的節點名稱</td>
+                </tr>
+                <tr>
+                    <td>custom_domain</td><td>string</td><td>A/CNAME 必填</td><td>要刪除的子網域</td>
+                </tr>
+            </table>
+            </div>
+            <b>SRV 範例：</b>
+            <pre>
+curl -X POST https://taiwanfrp.ddns.net/node_del_domain \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "你的帳號",
+    "password": "你的密碼",
+    "node": "TaiwanFRP節點名稱",
+  }'
+            </pre>
+            <b>A/CNAME 範例：</b>
+            <pre>
+curl -X POST https://taiwanfrp.ddns.net/node_del_domain \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "你的帳號",
+    "password": "你的密碼",
+    "custom_domain": "你的子網域"
+  }'
+            </pre>
+            <b>成功回應：</b>
+            <pre>SRV 網域已刪除並同步到 Cloudflare</pre>
+            <div class="notice">
+                只能刪除自己擁有的節點下的網域。只會刪除 SRV 類型的網域（Minecraft 專用），若該節點沒有 SRV 網域會回傳錯誤。
+            </div>
+        </div>
+
+        <div class="api-section">
+            <h2>/what_nodes_domain 查詢節點網域</h2>
+            <pre>
+curl -X POST https://taiwanfrp.ddns.net/what_nodes_domain \
+  -H "Content-Type: application/json" \
+  -d '{"username":"你的帳號","password":"你的密碼","nodeName":"美國洛杉磯Frontier"}'
+            </pre>
+            <b>回應範例：</b>
+            <pre>
+{"domain":true,"domains":[{"domain_value":"fewfewfewf.taiwanfrp.me","ip":"1.2.3.4"}]}
+            </pre>
+            <pre>
+{"domain":false}
+            </pre>
+        </div>
+
+        <div class="api-section">
+            <h2>/del_acc_all_srv 刪除帳號所有 SRV 網域</h2>
+            <pre>
+curl -X POST https://taiwanfrp.ddns.net/del_acc_all_srv \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "你的帳號",
+    "password": "你的密碼"
+  }'
+            </pre>
+            <b>回應範例：</b>
+            <pre>
+{
+  "success": true,
+  "deleted": 2,
+  "errors": [
+    "Cloudflare 未找到: _minecraft._tcp.tw1.taiwanfrp.me"
+  ]
+}
+            </pre>
+            <div class="notice">
+                此 API 只會刪除 SRV 類型的 DNS 記錄，不會影響 A 或 CNAME。
+            </div>
+        </div>
+
+        <div class="api-section">
+            <h2>/what_all_srv_domain 查詢所有 SRV 網域</h2>
+            <pre>
+curl -X POST https://taiwanfrp.ddns.net/what_all_srv_domain \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "你的帳號",
+    "password": "你的密碼"
+  }'
+            </pre>
+            <b>回應範例：</b>
+            <pre>
+{
+  "domain": true,
+  "srv_domains": [
+    {
+      "nodeName": "TaiwanFRP節點名稱",
+      "domain": "_minecraft._tcp.想要的子網域.taiwanfrp.me",
+      "name": "想要的子網域",
+      "port": SRV指向端口,
+      "target": "目標IP或域名"
+    }
+    // ...更多 SRV 紀錄
+  ]
+}
+            </pre>
+            <div class="notice">
+                此 API 只會列出屬於該用戶的所有 SRV 類型 DNS 紀錄。
+            </div>
+        </div>
+
+        <div class="api-section">
+            <h2>DDNS 更新 API（一般網域）</h2>
+            <ul>
+                <li><b>指定更新 IP：</b>
+                    <pre>curl "https://taiwanfrp.ddns.net/api/ddns_update?username=你的帳號&password=你的密碼&domain=你的網域&ip=想更新的IP"</pre>
+                    <span style="color:#222">直接將「你的網域」的 IP 更新為「想更新的IP」。</span>
+                </li>
+                <li><b>自動更新（更新成發送請求的電腦 IP）：</b>
+                    <pre>curl "https://taiwanfrp.ddns.net/api/ddns_update?username=你的帳號&password=你的密碼&domain=你的網域"</pre>
+                </li>
+            </ul>
+            <div class="notice">
+                請將 <code>你的網域</code>、<code>想更新的IP</code> 替換成實際值。
+            </div>
+        </div>
+
+        <div style="margin-top:32px;text-align:center;color:#888;">
+            如需更多協助，請聯絡管理員。
+        </div>
+    </div>
+</body>
+</html>
