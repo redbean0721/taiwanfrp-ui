@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登入-TAIWANFRP</title>
+    <link rel="icon" href="img/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url('img/background.png');
+            background-size: cover;
+            color: #fff;
+        }
+
+        header {
+            background-color: #fff;
+            color: #333;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            padding-top: 60px; /* Add padding to move the title down */
+        }
+
+        .auth-buttons {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .auth-buttons a,
+        .auth-buttons button {
+            color: #ffbf00;
+            background-color: #333;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            display: inline-block;
+            font-size: calc(10px + 0.5vw);
+        }
+
+        .auth-buttons a:hover,
+        .auth-buttons a:focus,
+        .auth-buttons button:hover,
+        .auth-buttons button:focus {
+            color: #fff;
+        }
+
+        section {
+            margin: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: rgba(255, 255, 255, 0.7);
+        }
+
+        h2 {
+            color: #000;
+        }
+
+        label {
+            color: #000;
+        }
+
+        input {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #333;
+            color: #ffbf00;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: calc(10px + 0.5vw);
+        }
+
+        button:hover,
+        button:focus {
+            background-color: #555;
+            color: #fff;
+        }
+
+        .message-box {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #333;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            z-index: 1001;
+        }
+        .message-box button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #333;
+            color: #ffbf00;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+    </style>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7462519862770683"
+     crossorigin="anonymous"></script>
+    <script>
+        async function login(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            const response = await fetch('https://taiwanfrp.ddns.net/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, password })
+            });
+
+            if (response.ok) {
+                document.cookie = `username=${username}; path=/`;
+                document.cookie = `password=${password}; path=/`;
+                document.cookie = 'admin_verification_code=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+                document.cookie = 'adminchanguser=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+                showMessage(`登入成功，歡迎 ${username} 回來TAIWANFRP！`, true);
+            } else {
+                showMessage('登入失敗: ' + await response.text());
+            }
+        }
+
+        function showForgotPassword() {
+            document.getElementById('login-section').style.display = 'none';
+            document.getElementById('forgot-password-section').style.display = 'block';
+        }
+
+        function showLogin() {
+            document.getElementById('login-section').style.display = 'block';
+            document.getElementById('forgot-password-section').style.display = 'none';
+        }
+
+        async function resetPassword(event) {
+            event.preventDefault();
+            const username = document.getElementById('reset-username').value;
+            const code = document.getElementById('reset-code').value;
+            const newPassword = document.getElementById('new-password').value;
+            const response = await fetch('https://taiwanfrp.ddns.net/reset_password', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, code, newPassword })
+            });
+
+            if (response.ok) {
+                alert('密碼重置成功');
+                window.location.href = 'index.html';
+            } else {
+                alert('重置密碼失敗: ' + await response.text());
+            }
+        }
+
+        async function requestPasswordReset(event) {
+            event.preventDefault();
+            const username = document.getElementById('reset-username').value;
+            const response = await fetch('https://taiwanfrp.ddns.net/request_password_reset', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username })
+            });
+
+            if (response.ok) {
+                alert('驗證碼已發送到您的Discord');
+            } else {
+                alert('發送驗證碼失敗: ' + await response.text());
+            }
+        }
+
+        function showMessage(message, success = false) {
+            const messageBox = document.getElementById('message-box');
+            const overlay = document.getElementById('overlay');
+            messageBox.innerHTML = `<p>${message}</p>`;
+            if (success) {
+                messageBox.innerHTML += `<button onclick="window.location.href='index.html'">確定</button>`;
+            } else {
+                messageBox.innerHTML += `<button onclick="hideMessage()">確定</button>`;
+            }
+            messageBox.style.display = 'block';
+            overlay.style.display = 'block';
+            document.addEventListener('keydown', handleEnterKey);
+        }
+
+        function hideMessage() {
+            document.getElementById('message-box').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+            document.removeEventListener('keydown', handleEnterKey);
+        }
+
+        function handleEnterKey(event) {
+            if (event.key === 'Enter') {
+                const button = document.querySelector('.message-box button');
+                if (button) {
+                    button.click();
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+    <header>
+        <h1>登入TAIWANFRP</h1>
+        <div class="auth-buttons">
+            <a href="index.html">返回主畫面</a>
+        </div>
+    </header>
+    <section id="login-section">
+        <form onsubmit="login(event);">
+            <label for="username">使用者名稱:</label>
+            <input type="text" id="username" name="username" required><br><br>
+            <label for="password">密碼:</label>
+            <input type="password" id="password" name="password" required><br><br>
+            <button type="submit">登入</button>
+        </form>
+        <a href="#" onclick="showForgotPassword()">忘記密碼?</a>
+        <p style="color: #000;">還沒有帳號？ <a href="reg.html">點擊這裡註冊</a></p>
+    </section>
+    <section id="forgot-password-section" style="display: none;">
+        <form onsubmit="requestPasswordReset(event);">
+            <label for="reset-username">使用者名稱:</label>
+            <input type="text" id="reset-username" name="reset-username" required><br><br>
+            <button type="submit">發送驗證碼</button>
+        </form>
+        <form onsubmit="resetPassword(event);">
+            <label for="reset-code">請輸入驗證碼:</label>
+            <input type="text" id="reset-code" name="reset-code" required><br><br>
+            <label for="new-password">請輸入新密碼:</label>
+            <input type="password" id="new-password" name="new-password" required><br><br>
+            <button type="submit">重置密碼</button>
+        </form>
+        <button onclick="showLogin()">回到登入</button>
+    </section>
+    <div id="message-box" class="message-box"></div>
+    <div id="overlay" class="overlay"></div>
+</body>
+</html>

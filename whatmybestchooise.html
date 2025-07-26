@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>推薦最佳節點 - TAIWANFRP</title>
+    <link rel="icon" href="img/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url('img/background.png');
+            background-size: cover;
+            color: #fff;
+            overflow-x: hidden;
+        }
+        header {
+            background-color: #fff;
+            color: #333;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            padding-top: 60px;
+            animation: fadeIn 1s ease-in-out;
+        }
+        section {
+            margin: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: rgba(255, 255, 255, 0.7);
+            animation: fadeInUp 1s ease-in-out;
+        }
+        h2 {
+            color: #000;
+            animation: fadeInDown 1s ease-in-out;
+        }
+        .node-card {
+            background: #fff;
+            color: #333;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+            margin: 18px 0;
+            padding: 22px 28px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            position: relative;
+            border: 2px solid #eee;
+            transition: box-shadow 0.2s;
+        }
+        .node-card.best {
+            border: 2px solid #00b300;
+            background: linear-gradient(90deg,#eaffea 60%,#fff 100%);
+            box-shadow: 0 4px 16px rgba(0,179,0,0.12);
+        }
+        .node-card .best-label {
+            position: absolute;
+            top: 12px;
+            right: 18px;
+            background: #00b300;
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 16px;
+            letter-spacing: 1px;
+        }
+        .node-card.secondary {
+            border: 2px solid #007bff;
+            background: linear-gradient(90deg,#eaf4ff 60%,#fff 100%);
+            box-shadow: 0 4px 16px rgba(0,123,255,0.12);
+        }
+        .node-card .secondary-label {
+            position: absolute;
+            top: 12px;
+            right: 18px;
+            background: #007bff;
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 16px;
+            letter-spacing: 1px;
+        }
+        .node-card.worst {
+            border: 2px solid #ff0000;
+            background: linear-gradient(90deg,#ffeaea 60%,#fff 100%);
+            box-shadow: 0 4px 16px rgba(255,0,0,0.12);
+        }
+        .node-card .worst-label {
+            position: absolute;
+            top: 12px;
+            right: 18px;
+            background: #ff0000;
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 16px;
+            letter-spacing: 1px;
+        }
+        .node-card.normal {
+            border: 2px solid #ffbf00;
+            background: linear-gradient(90deg,#fffbe5 60%,#fff 100%);
+            box-shadow: 0 4px 16px rgba(255,191,0,0.12);
+        }
+        .node-card .normal-label {
+            position: absolute;
+            top: 12px;
+            right: 18px;
+            background: #ffbf00;
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 16px;
+            letter-spacing: 1px;
+        }
+        .node-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #ffbf00;
+        }
+        .node-ip {
+            font-size: 16px;
+            color: #007bff;
+            font-weight: bold;
+        }
+        .node-status {
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .node-status.online {
+            color: #00b300;
+        }
+        .node-status.offline {
+            color: #ff0000;
+        }
+        .node-level {
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .node-level.level-best {
+            color: #00b300;
+        }
+        .node-level.level-normal {
+            color: #ff9900;
+        }
+        .node-level.level-busy {
+            color: #ff0000;
+        }
+        .node-ping {
+            font-size: 16px;
+        }
+        .node-score {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .loading-spinner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 40px 0;
+        }
+        .spinner {
+            border: 6px solid #eee;
+            border-top: 6px solid #ffbf00;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 16px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .loading-text {
+            color: #333;
+            font-size: 20px;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>推薦最佳節點</h1>
+    </header>
+    <section>
+        <h2>根據你的網路推薦節點</h2>
+        <div id="recommend-list">
+            <div class="loading-spinner">
+                <div class="spinner"></div>
+                <div class="loading-text">正在計算...</div>
+                <div style="color:#9e00b6;font-size:16px;margin-top:8px;text-align:center;">根據節點剛前的流暢程度與節點跟你的延遲計算，任何時間計算的結果可能不同，但這是當下最適合於你的節點。</div>
+                <div style="width:100%;margin-top:16px;">
+                    <div id="progress-bar-bg" style="width:100%;height:18px;background:#eee;border-radius:9px;overflow:hidden;">
+                        <div id="progress-bar" style="width:0%;height:100%;background:#ffbf00;transition:width 0.2s;"></div>
+                    </div>
+                    <div id="progress-text" style="text-align:center;color:#333;font-size:16px;margin-top:4px;">0%</div>
+                </div>
+            </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:24px;">
+            <button id="retry-btn" style="padding:10px 24px;font-size:18px;border-radius:8px;background:#ffbf00;color:#333;font-weight:bold;border:none;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.12);transition:background 0.2s;">重新計算</button>
+            <button id="back-btn" style="padding:10px 24px;font-size:18px;border-radius:8px;background:#007bff;color:#fff;font-weight:bold;border:none;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.12);transition:background 0.2s;">返回上一頁</button>
+        </div>
+    </section>
+    <div id="toast" style="position:fixed;bottom:40px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.85);color:#fff;padding:16px 32px;border-radius:8px;font-size:18px;z-index:9999;display:none;box-shadow:0 2px 12px rgba(0,0,0,0.18);transition:opacity 0.3s;opacity:0;"></div>
+    <script>
+    async function fetchNodes() {
+        const resp = await fetch('https://taiwanfrp.ddns.netnodes.json');
+        if (!resp.ok) throw new Error('無法取得節點列表');
+        const data = await resp.json();
+        return data.nodes;
+    }
+    async function fetchNodeInfo(nodeName) {
+        const url = `/api/get_one_serverinfo?nodeName=${encodeURIComponent(nodeName)}`;
+        const resp = await fetch(url);
+        if (!resp.ok) return null;
+        return await resp.json();
+    }
+    function ping(ip) {
+        // 執行三次 GET 請求，取後面兩次平均
+        return new Promise(async resolve => {
+            const results = [];
+            for (let i = 0; i < 3; i++) {
+                await new Promise(res => {
+                    const start = performance.now();
+                    let finished = false;
+                    const timeout = setTimeout(() => {
+                        if (!finished) {
+                            finished = true;
+                            results.push(9999);
+                            console.log(`${ip} 第${i+1}次 ping: 9999 ms (timeout)`);
+                            res();
+                        }
+                    }, 3000);
+                    // 隨機 base auth
+                    const username = 'testuser';
+                    const password = Math.random().toString(36).slice(2, 10);
+                    const basicAuth = 'Basic ' + btoa(username + ':' + password);
+                    fetch(`http://${ip}:7500/favicon.ico?_=${Date.now()}_${i}`, {
+                        mode: 'no-cors',
+                        headers: {
+                            'Authorization': basicAuth
+                        }
+                    })
+                    .then(() => {
+                        if (!finished) {
+                            finished = true;
+                            clearTimeout(timeout);
+                            const ms = performance.now() - start;
+                            results.push(ms);
+                            console.log(`${ip} 第${i+1}次 ping: ${ms} ms`);
+                            res();
+                        }
+                    })
+                    .catch(() => {
+                        if (!finished) {
+                            finished = true;
+                            clearTimeout(timeout);
+                            const ms = performance.now() - start;
+                            results.push(ms);
+                            console.log(`${ip} 第${i+1}次 ping: ${ms} ms (error)`);
+                            res();
+                        }
+                    });
+                });
+            }
+            // 取第2、3次平均
+            const lastTwo = results.slice(-2);
+            const avg = (lastTwo[0] + lastTwo[1]) / 2;
+            resolve({ avg, lastTwo });
+        });
+    }
+    function levelScore(level, online, curConns) {
+        if (!online) return 9999;
+        return curConns || 0;
+    }
+    function levelClass(level) {
+        if (level === '最流暢') return 'level-best';
+        if (level === '普通') return 'level-normal';
+        if (level === '最忙碌') return 'level-busy';
+        return '';
+    }
+    function getPingDivisor() {
+        const ua = navigator.userAgent;
+        if (ua.includes('Safari') && !ua.includes('Chrome') && !ua.includes('Chromium')) {
+            return 6.4;
+        } else {
+            return 3.2;
+        }
+    }
+    function getPingLabel(pingMs, allPings) {
+        const divisor = getPingDivisor();
+        const min = Math.min(...allPings);
+        const max = Math.max(...allPings);
+        if (pingMs === max) return { label: '最高', color: '#ff0000' };
+        if (pingMs / divisor < 100 || pingMs === min) return { label: pingMs === min ? '最低' : '低', color: '#00b300' };
+        if (pingMs / divisor >= 100 && pingMs / divisor <= 130) return { label: '普通', color: '#ffbf00' };
+        if (pingMs / divisor > 130) return { label: '高', color: '#ff0000' };
+        return { label: '普通', color: '#ffbf00' };
+    }
+    function getLevelLabel(level) {
+        if (level === '最流暢') return '<span style="color:#00b300;font-weight:bold;">最流暢</span>';
+        if (level === '普通') return '<span style="color:#ffbf00;font-weight:bold;">普通</span>';
+        if (level === '最忙碌') return '<span style="color:#ff0000;font-weight:bold;">最忙碌</span>';
+        return level;
+    }
+    // --- Toast & Phrase Logic ---
+    const phrases = {
+        best: [
+            '這是你的超級VIP節點！',
+            '速度快到飛起來！',
+            '最佳選擇，穩如老狗！',
+            '推薦給你，快去用吧！',
+            '這個節點今天很給力！',
+            '猶豫什麼？這個就是了！',
+            '這個節點是你的最佳拍檔！',
+            '這個節點是你的網路最佳救星啊！',
+            '這個節點最牛B了，別猶豫了！',
+        ],
+        secondary: [
+            '次要推薦，表現沒問題ok啦～',
+            '或著你也可以選他？',
+            '備用節點，隨時待命！',
+            '之後最推薦太多人可以用他哦！',
+            '這個節點還不錯，備用也行！',
+            '次要推薦，最推薦的出事就能發揮啦！',
+            '備用節點？完全ok的啦！'
+
+        ],
+        normal: [
+            '普通節點，表現中規中矩。',
+            '還行，湊合用！',
+            '有時候也會很快喔！',
+            '一般般，偶爾也能發揮。',
+            '能用，就一般。',
+            '備用的備用就是他！',
+            '這個節點還算可以，別太期待。',
+            '這個節點還行，別太挑剔。'
+
+
+        ],
+        worst: [
+            '這個節點今天有點累...',
+            '最不推薦，建議換一個！',
+            '速度較慢，請斟酌使用。',
+            '這個節點可能在打瞌睡。',
+            '這個節點有點慢，建議換一個！',
+            '這個節點可能需要休息一下。',
+            '這個節點今天狀態不佳，建議換一個！',
+            '這個節點可能需要重新啟動一下。',
+            '你再用他？簡直污名化TaiwanFRP聲譽！',
+            '還在用？換一個吧！'
+
+        ]
+    };
+    function showToast(msg) {
+        const toast = document.getElementById('toast');
+        toast.textContent = msg;
+        toast.style.display = 'block';
+        setTimeout(() => { toast.style.opacity = 1; }, 10);
+        setTimeout(() => {
+            toast.style.opacity = 0;
+            setTimeout(() => { toast.style.display = 'none'; }, 350);
+        }, 1800);
+    }
+    function getRandom(arr) {
+        return arr[Math.floor(Math.random() * arr.length)];
+    }
+    // 綁定卡片點擊事件（卡片說話效果）
+    function bindCardPhrases() {
+        document.querySelectorAll('.node-card').forEach(card => {
+            card.onclick = function(e) {
+                // 移除現有的 bubble
+                card.querySelectorAll('.card-bubble').forEach(b => b.remove());
+                let type = '';
+                if (card.classList.contains('best')) type = 'best';
+                else if (card.classList.contains('secondary')) type = 'secondary';
+                else if (card.classList.contains('worst')) type = 'worst';
+                else if (card.classList.contains('normal')) type = 'normal';
+                if (!type) return;
+                const msg = getRandom(phrases[type]);
+                // 取得分數
+                const pingScore = card.getAttribute('data-pingscore');
+                const lScore = card.getAttribute('data-lscore');
+                // 建立 bubble 元素
+                const bubble = document.createElement('div');
+                bubble.className = 'card-bubble';
+                bubble.innerHTML = `
+                    <div>${msg}</div>
+                    <div style="margin-top:6px;font-size:15px;color:#ffbf00;">延遲扣分：<span style="color:#007bff;">${pingScore}</span></div>
+                    <div style="font-size:15px;color:#ffbf00;">忙碌扣分：<span style="color:#007bff;">${lScore}</span></div>
+                `;
+                bubble.style.position = 'absolute';
+                bubble.style.left = '50%';
+                bubble.style.top = '-18px';
+                bubble.style.transform = 'translate(-50%, -100%)';
+                bubble.style.background = 'rgba(0,0,0,0.88)';
+                bubble.style.color = '#fff';
+                bubble.style.padding = '10px 22px';
+                bubble.style.borderRadius = '18px';
+                bubble.style.fontSize = '17px';
+                bubble.style.fontWeight = 'bold';
+                bubble.style.boxShadow = '0 2px 12px rgba(0,0,0,0.18)';
+                bubble.style.zIndex = '10';
+                bubble.style.pointerEvents = 'none';
+                bubble.style.opacity = '0';
+                bubble.style.transition = 'opacity 0.2s';
+                // 小三角形
+                const triangle = document.createElement('div');
+                triangle.style.position = 'absolute';
+                triangle.style.left = '50%';
+                triangle.style.top = '100%';
+                triangle.style.transform = 'translateX(-50%)';
+                triangle.style.width = '0';
+                triangle.style.height = '0';
+                triangle.style.borderLeft = '10px solid transparent';
+                triangle.style.borderRight = '10px solid transparent';
+                triangle.style.borderTop = '10px solid rgba(0,0,0,0.88)';
+                bubble.appendChild(triangle);
+                // 插入到卡片
+                card.style.position = 'relative';
+                card.appendChild(bubble);
+                setTimeout(() => { bubble.style.opacity = '1'; }, 10);
+                setTimeout(() => {
+                    bubble.style.opacity = '0';
+                    setTimeout(() => { bubble.remove(); }, 350);
+                }, 2000);
+            };
+        });
+    }
+    async function main() {
+        const recommendList = document.getElementById('recommend-list');
+        const retryBtn = document.getElementById('retry-btn');
+        retryBtn.disabled = true;
+        // 進度條元素
+        let progressBar = null, progressText = null;
+        setTimeout(() => {
+            progressBar = document.getElementById('progress-bar');
+            progressText = document.getElementById('progress-text');
+        }, 0);
+        try {
+            const nodes = await fetchNodes();
+            let results = [];
+            const totalPingCount = nodes.length * 3;
+            let currentPingCount = 0;
+            function updateProgress() {
+                if (progressBar && progressText) {
+                    const percent = Math.round(currentPingCount / totalPingCount * 100);
+                    progressBar.style.width = percent + '%';
+                    progressText.textContent = percent + '%';
+                }
+            }
+            for (const node of nodes) {
+                const info = await fetchNodeInfo(node.name);
+                // ping 三次，每次都更新進度
+                const pingResult = await (async () => {
+                    const results = [];
+                    for (let i = 0; i < 3; i++) {
+                        await new Promise(res => {
+                            const start = performance.now();
+                            let finished = false;
+                            const timeout = setTimeout(() => {
+                                if (!finished) {
+                                    finished = true;
+                                    results.push(9999);
+                                    res();
+                                }
+                            }, 3000);
+                            const username = 'testuser';
+                            const password = Math.random().toString(36).slice(2, 10);
+                            const basicAuth = 'Basic ' + btoa(username + ':' + password);
+                            fetch(`http://${node.ip}:7500/favicon.ico?_=${Date.now()}_${i}`, {
+                                mode: 'no-cors',
+                                headers: { 'Authorization': basicAuth }
+                            })
+                            .then(() => {
+                                if (!finished) {
+                                    finished = true;
+                                    clearTimeout(timeout);
+                                    const ms = performance.now() - start;
+                                    results.push(ms);
+                                    res();
+                                }
+                            })
+                            .catch(() => {
+                                if (!finished) {
+                                    finished = true;
+                                    clearTimeout(timeout);
+                                    const ms = performance.now() - start;
+                                    results.push(ms);
+                                    res();
+                                }
+                            });
+                        });
+                        currentPingCount++;
+                        updateProgress();
+                    }
+                    const lastTwo = results.slice(-2);
+                    const avg = (lastTwo[0] + lastTwo[1]) / 2;
+                    return { avg, lastTwo };
+                })();
+                const lScore = info ? levelScore(info.level, info.online, info.curConns) : 9999;
+                results.push({
+                    name: node.name,
+                    ip: node.ip,
+                    level: info ? info.level : '未知',
+                    online: info ? info.online : false,
+                    lScore,
+                    pingMs: pingResult.avg,
+                    curConns: info && typeof info.curConns === 'number' ? info.curConns : 9999,
+                    proxyTypeCount: info && info.proxyTypeCount ? info.proxyTypeCount : {},
+                    tcp: info && typeof info.tcp === 'number' ? info.tcp : (info && info.proxyTypeCount && typeof info.proxyTypeCount.tcp === 'number' ? info.proxyTypeCount.tcp : 9999)
+                });
+            }
+            // 只顯示在線的節點
+            results = results.filter(node => node.online);
+            // 取得所有 ping 值，避免 allPings 未定義錯誤
+            const allPings = results.map(r => r.pingMs);
+            // 依 ping 值排序
+            const sortedPing = [...results].sort((a, b) => a.pingMs - b.pingMs);
+            // 新的 ping 分數計算方式
+            const divisor = getPingDivisor();
+            let prevPing = sortedPing[0]?.pingMs || 0;
+            let prevScore = 1;
+            if (sortedPing.length > 0) {
+                sortedPing[0].pingScore = 1;
+                for (let i = 1; i < sortedPing.length; i++) {
+                    const diff = sortedPing[i].pingMs - prevPing;
+                    let score = Math.ceil(diff / divisor / 10); // 無條件進位
+                    if (score < 1) score = 1; // 只要延遲比較高至少加1
+                    sortedPing[i].pingScore = prevScore + score;
+                    prevPing = sortedPing[i].pingMs;
+                    prevScore = sortedPing[i].pingScore;
+                }
+            }
+            // 將分數回填到 results
+            sortedPing.forEach(node => {
+                const r = results.find(n => n.ip === node.ip);
+                if (r) r.pingScore = node.pingScore;
+            });
+            results.forEach(node => {
+                node.totalScore = node.lScore + node.pingScore;
+            });
+            results.sort((a, b) => {
+                // 先比 totalScore
+                if (a.totalScore !== b.totalScore) return a.totalScore - b.totalScore;
+                // totalScore 一樣，比 curConns
+                if (a.curConns !== b.curConns) return a.curConns - b.curConns;
+                // curConns 一樣，比 tcp
+                const aTcp = (a.proxyTypeCount && typeof a.proxyTypeCount.tcp === 'number') ? a.proxyTypeCount.tcp : (typeof a.tcp === 'number' ? a.tcp : 9999);
+                const bTcp = (b.proxyTypeCount && typeof b.proxyTypeCount.tcp === 'number') ? b.proxyTypeCount.tcp : (typeof b.tcp === 'number' ? b.tcp : 9999);
+                return aTcp - bTcp;
+            });
+            const minScore = Math.min(...results.map(n => n.totalScore));
+            // 只保留一個最推薦
+            const bestNode = results[0];
+            // 被比下去的丟到次要推薦，最多再推一個
+            let secondaryNodes = [];
+            // 只挑選 pingMs / divisor <= 100 的節點作為次要推薦
+            if (results.length > 1) {
+                for (let i = 1; i < results.length && secondaryNodes.length < 1; i++) {
+                    const secDivisor = getPingDivisor();
+                    if ((results[i].pingMs / secDivisor) <= 100) {
+                        secondaryNodes.push(results[i]);
+                    }
+                }
+            }
+            // 新增最不推薦
+            let worstNode = null;
+            if (results.length > 0) {
+                worstNode = results[results.length - 1];
+            }
+            recommendList.innerHTML = results.map((node, idx) => {
+                const pingInfo = getPingLabel(node.pingMs, allPings);
+                const isBest = node === bestNode;
+                const isSecondary = secondaryNodes.some(n => n.ip === node.ip);
+                const isWorst = node === worstNode;
+                const isNormal = !isBest && !isSecondary && !isWorst;
+                const divisor = getPingDivisor();
+                return `
+                    <div class="node-card${isBest ? ' best' : (isSecondary ? ' secondary' : (isWorst ? ' worst' : (isNormal ? ' normal' : '')))}" 
+                        data-pingscore="${node.pingScore}" data-lscore="${node.lScore}">
+                        ${isBest ? '<div class="best-label">最推薦</div>' : (isSecondary ? `<div class="secondary-label">次要推薦</div>` : (isWorst ? '<div class="worst-label">最不推薦</div>' : (isNormal ? '<div class="normal-label">普通</div>' : '')))}
+                        <div class="node-title" style="margin-top:32px;text-align:center;">${node.name}</div>
+                        <div class="node-ip">IP: ${node.ip}</div>
+                        <div class="node-status online">在線</div>
+                        <div class="node-level">忙碌程度: ${getLevelLabel(node.level)}</div>
+                        <div class="node-ping">延遲：<span style="color:${pingInfo.color};font-weight:bold;">${pingInfo.label}</span></div>
+                        <div class="node-score">因故扣分: ${node.totalScore}</div>
+                    </div>
+                `;
+            }).join('');
+            // 新增：渲染完卡片後綁定事件
+            bindCardPhrases();
+        } catch (e) {
+            recommendList.innerHTML = `<span style="color:red;">載入失敗: ${e.message}</span>`;
+        }
+        retryBtn.disabled = false;
+    }
+    main();
+    document.getElementById('retry-btn').onclick = function() {
+        document.getElementById('recommend-list').innerHTML = `<div class="loading-spinner"><div class="spinner"></div><div class="loading-text">正在計算...</div><div style="color:#9e00b6;font-size:16px;margin-top:8px;text-align:center;">根據節點剛前的流暢程度與節點跟你的延遲計算，任何時間計算的結果可能不同，但這是當下最適合於你的節點。</div><div style="width:100%;margin-top:16px;"><div id="progress-bar-bg" style="width:100%;height:18px;background:#eee;border-radius:9px;overflow:hidden;"><div id="progress-bar" style="width:0%;height:100%;background:#ffbf00;transition:width 0.2s;"></div></div><div id="progress-text" style="text-align:center;color:#333;font-size:16px;margin-top:4px;">0%</div></div>`;
+        main();
+    };
+    document.getElementById('back-btn').onclick = function() {
+        if (window.history.length > 1) {
+            window.history.back();
+        } else {
+            window.location.href = 'https://taiwanfrp.ddns.net';
+        }
+    };
+    </script>
+</body>
+</html>

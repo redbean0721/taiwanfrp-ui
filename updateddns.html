@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DDNS 自動更新</title>
+    <link rel="icon" href="img/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url('img/background.png');
+            background-size: cover;
+            color: #fff;
+            overflow-x: hidden;
+        }
+        section {
+            margin: 20px auto;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: rgba(255, 255, 255, 0.7);
+            max-width: 400px;
+            animation: fadeInUp 1s ease-in-out;
+        }
+        h2 {
+            color: #000;
+            text-align: center;
+            animation: fadeInDown 1s ease-in-out;
+        }
+        label {
+            color: #333;
+            font-weight: bold;
+        }
+        input {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            color: #ffbf00;
+            background-color: #333;
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button:hover {
+            color: #fff;
+        }
+        .timer {
+            color: #fff;
+            font-size: 20px;
+            text-align: center;
+            margin-bottom: 16px;
+            background: linear-gradient(90deg, #ffbf00 0%, #ffdf80 100%);
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(255,191,0,0.08);
+            padding: 10px 0;
+            letter-spacing: 1px;
+            font-weight: bold;
+            border: 1.5px solid #ffbf00;
+            transition: background 0.3s;
+        }
+        .response {
+            color: #000;
+            background: #fffbe6;
+            border-radius: 5px;
+            padding: 10px;
+            margin-top: 10px;
+            min-height: 30px;
+            word-break: break-all;
+        }
+        .response .success-yes {
+            color: #1ca81c;
+            font-weight: bold;
+        }
+        .response .success-no {
+            color: #d32f2f;
+            font-weight: bold;
+        }
+        #domain-group {
+            display: flex;
+            align-items: center;
+            gap: 0;
+        }
+        #domain {
+            flex: 1;
+            margin-bottom: 10px;
+            margin-right: 0;
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+            text-align: right;
+        }
+        .domain-suffix {
+            background: #eee;
+            color: #888;
+            padding: 0 10px;
+            border: 1px solid #ccc;
+            border-left: 0;
+            border-radius: 0 5px 5px 0;
+            font-size: 14px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            line-height: 38px;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <section>
+        <h2>DDNS 自動更新</h2>
+        <form id="ddnsForm">
+            <label for="username">帳號 (必填):</label><br>
+            <input type="text" id="username" name="username" required><br>
+            <label for="password">密碼 (必填):</label><br>
+            <input type="password" id="password" name="password" required><br>
+            <label for="domain">網域 (必填):</label><br>
+            <div id="domain-group">
+                <input type="text" id="domain" name="domain" required>
+                <span class="domain-suffix">.taiwanfrp.me</span>
+            </div>
+            <label for="ip">想要更新的 IP (選填):</label><br>
+            <input type="text" id="ip" name="ip" placeholder="不填則自動偵測"><br>
+            <label for="timerSelect">自動更新間隔：</label><br>
+            <select id="timerSelect" style="width:100%;padding:10px;margin-bottom:10px;border-radius:5px;border:1px solid #ccc;">
+                <option value="60">1分鐘</option>
+                <option value="300">5分鐘</option>
+                <option value="600" selected>10分鐘</option>
+                <option value="1800">30分鐘</option>
+                <option value="3600">60分鐘</option>
+            </select>
+            <div class="timer" id="timer">距離下次自動更新：10:00</div>
+            <button type="button" id="updateBtn">立即更新</button>
+        </form>
+        <div style="color:#333;font-size:15px;margin-top:18px;margin-bottom:2px;font-weight:bold;">伺服器回應：</div>
+        <div id="parsedResponse" style="color:#333;font-size:15px;margin-top:8px;"></div>
+        <div class="response" id="response"></div>
+    </section>
+    <script>
+        let timer = 600;
+        let timerInterval;
+        let timerStarted = false;
+        let timerDefault = 600;
+        const timerDisplay = document.getElementById('timer');
+        const responseDiv = document.getElementById('response');
+        const form = document.getElementById('ddnsForm');
+        const updateBtn = document.getElementById('updateBtn');
+        const timerSelect = document.getElementById('timerSelect');
+
+        timerSelect.addEventListener('change', function() {
+            timerDefault = parseInt(this.value, 10);
+            timer = timerDefault;
+            updateTimerDisplay();
+        });
+
+        function updateTimerDisplay() {
+            const min = String(Math.floor(timer / 60)).padStart(2, '0');
+            const sec = String(timer % 60).padStart(2, '0');
+            timerDisplay.textContent = `距離下次自動更新：${min}:${sec}`;
+        }
+
+        function resetTimer() {
+            timer = timerDefault;
+            updateTimerDisplay();
+        }
+
+        function startTimer() {
+            if (timerStarted) return;
+            timerStarted = true;
+            timerInterval = setInterval(() => {
+                timer--;
+                updateTimerDisplay();
+                if (timer <= 0) {
+                    doUpdate();
+                }
+            }, 1000);
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+            timerStarted = false;
+        }
+
+        async function doUpdate() {
+            stopTimer();
+            updateBtn.disabled = true;
+            document.getElementById('parsedResponse').textContent = '';
+            responseDiv.textContent = '更新中...';
+            const username = form.username.value.trim();
+            const password = form.password.value.trim();
+            let domain = form.domain.value.trim();
+            // 自動補全 taiwanfrp.me
+            if (!/taiwanfrp\.me$/i.test(domain)) {
+                domain = domain + '.taiwanfrp.me';
+            }
+            const ip = form.ip.value.trim();
+            if (!username || !password || !domain) {
+                responseDiv.textContent = '請填寫所有必填欄位';
+                updateBtn.disabled = false;
+                resetTimer();
+                return;
+            }
+            let url = `https://taiwanfrp.ddns.net/api/ddns_update?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}&domain=${encodeURIComponent(domain)}`;
+            if (ip) {
+                url += `&ip=${encodeURIComponent(ip)}`;
+            }
+            try {
+                const res = await fetch(url);
+                const text = await res.text();
+                // 嘗試解析 JSON 並顯示解析結果
+                let parsed = null;
+                let html = '';
+                try {
+                    parsed = JSON.parse(text);
+                } catch (e) {}
+                if (parsed && typeof parsed === 'object') {
+                    if ('success' in parsed) {
+                        html += `<span class="${parsed.success ? 'success-yes' : 'success-no'}">成功: ${parsed.success ? '是' : '否'}</span><br>`;
+                        if ('message' in parsed) {
+                            html += `結果: ${parsed.message}`;
+                        }
+                    } else if ('error' in parsed) {
+                        html += `<span class="success-no">成功: 否</span><br>結果: ${parsed.error}`;
+                    }
+                    responseDiv.innerHTML = html;
+                    document.getElementById('parsedResponse').textContent = text;
+                } else {
+                    responseDiv.textContent = text;
+                    document.getElementById('parsedResponse').textContent = '';
+                }
+            } catch (e) {
+                responseDiv.textContent = '更新失敗：' + e;
+                document.getElementById('parsedResponse').textContent = '';
+            }
+            updateBtn.disabled = false;
+            resetTimer();
+            startTimer();
+        }
+
+        updateBtn.addEventListener('click', () => {
+            doUpdate();
+        });
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            doUpdate();
+        });
+        updateTimerDisplay();
+    </script>
+</body>
+</html>

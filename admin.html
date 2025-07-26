@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理員面板-TAIWANFRP</title>
+    <link rel="icon" href="img/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url('img/background.png');
+            background-size: cover;
+            color: #fff;
+        }
+
+        header {
+            background-color: #fff;
+            color: #333;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            padding-top: 60px;
+        }
+
+        .auth-buttons {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .auth-buttons a,
+        .auth-buttons button {
+            color: #ffbf00;
+            background-color: #333;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            display: inline-block;
+            font-size: calc(10px + 0.5vw);
+        }
+
+        .auth-buttons a:hover,
+        .auth-buttons a:focus,
+        .auth-buttons button:hover,
+        .auth-buttons button:focus {
+            color: #fff;
+        }
+
+        section {
+            margin: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: rgba(255, 255, 255, 0.7);
+        }
+
+        h2 {
+            color: #000;
+        }
+
+        label {
+            color: #000;
+        }
+
+        input {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #333;
+            color: #ffbf00;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: calc(10px + 0.5vw);
+        }
+
+        button:hover,
+        button:focus {
+            background-color: #555;
+            color: #fff;
+        }
+
+        .user {
+            margin-bottom: 20px;
+            background-color: #ccc;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .user h3 {
+            color: #000;
+        }
+
+        .user button {
+            margin-right: 10px;
+        }
+
+        .editable {
+            cursor: pointer;
+            border: 1px dashed #000;
+            padding: 5px;
+            border-radius: 5px;
+            background-color: #fff;
+            color: #000;
+        }
+
+        .editable:focus {
+            outline: none;
+            border: 1px solid #000;
+        }
+
+        .message-box {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #333;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            z-index: 1001;
+        }
+        .message-box button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #333;
+            color: #ffbf00;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        #log-container {
+            width: 95%;
+            height: 300px;
+            overflow-y: auto;
+            background-color: #000;
+            color: #0f0;
+            padding: 10px;
+            border-radius: 8px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+
+        .ios-switch {
+            position: relative;
+            display: inline-block;
+            width: 34px;
+            height: 20px;
+        }
+
+        .ios-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ff0000b7;
+            transition: 0.4s;
+            border-radius: 20px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #4caf50;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(14px);
+        }
+
+        #node-form {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #ccc;
+            color: #000;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: rgba(0, 0, 0, 0.5);
+            z-index: 1001;
+        }
+
+        #overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .node-container {
+            border: 1px solid #432222;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: rgba(255, 255, 255, 0.9)
+        }
+
+        #nodes-section {
+            color: #000;
+        }
+
+        #betanodes-section {
+            color: #000; /* Set text color to black */
+        }
+    </style>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7462519862770683"
+     crossorigin="anonymous"></script>
+    <script>
+        async function verifyCode(event) {
+            event.preventDefault();
+            const verificationCode = document.getElementById('verificationCode').value;
+
+            const response = await fetch('https://taiwanfrp.ddns.net/admin_login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ verificationCode })
+            });
+
+            if (response.ok) {
+                document.cookie = `admin_verification_code=${verificationCode}; path=/`;
+                document.cookie = 'username=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+                document.cookie = 'password=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+                document.getElementById('verification-section').style.display = 'none';
+                document.getElementById('user-section').style.display = 'block';
+                document.getElementById('nodes-section').style.display = 'block'; // Show nodes section
+                document.getElementById('log-section').style.display = 'block'; // Show logs
+                document.getElementById('betanodes-section').style.display = 'block'; // Show betanodes section
+                loadUsers();
+                fetchNodes(); fetchBetaNodes();  fetchBetaNodes();
+                fetchBetaNodes(); // Fetch beta nodes after login
+                connectToLogs(); // Start WebSocket connection after login
+            } else {
+                alert('驗證失敗: ' + await response.text());
+            }
+        }
+
+        let allUsers = {};
+
+        function renderUsers(users) {
+            const userContainer = document.getElementById('user-container');
+            userContainer.innerHTML = '';
+            for (const username in users) {
+                const user = users[username];
+                const userDiv = document.createElement('div');
+                userDiv.className = 'user';
+                userDiv.innerHTML = `
+                    <h3>${username}</h3>
+                    <p>Discord: ${user.discordUsername}</p>
+                    <p>密碼: <span class="editable" contenteditable="true" data-old-password="${user.password}" onkeypress="handleKeyPress(event, '${username}')" onblur="updatePassword('${username}', this)">${user.password}</span></p>
+                    <p>最大代理數量: <span class="editable" contenteditable="true" onkeypress="handleKeyPress(event, '${username}', 'createmaxproxynum')" onblur="updateCreatemaxproxynum('${username}', this)">${user.createmaxproxynum || 0}</span></p>
+                    <p>速限 (KB): <span class="editable" contenteditable="true" onkeypress="handleKeyPress(event, '${username}', 'speed_limit')" onblur="updateSpeedLimit('${username}', this)">${user.speed_limit || '未設定'}</span></p>
+                    <p>
+                        到期日: 
+                        <label class="ios-switch">
+                            <input type="checkbox" onchange="toggleExpiration('${username}', this)" ${user.expirationDate ? 'checked' : ''}>
+                            <span class="slider"></span>
+                        </label>
+                        <input type="date" class="editable" style="display: ${user.expirationDate ? 'inline-block' : 'none'};" value="${user.expirationDate || ''}" onchange="updateExpirationDate('${username}', this)">
+                    </p>
+                    <button onclick="editTunnel('${username}')">編輯代理</button>
+                `;
+                userContainer.appendChild(userDiv);
+            }
+        }
+
+        async function loadUsers() {
+            const response = await fetch('https://taiwanfrp.ddns.net/get_users');
+            if (response.ok) {
+                allUsers = await response.json();
+                // 預設排序為 newest
+                const sortSelect = document.getElementById('user-sort');
+                if (sortSelect) sortSelect.value = 'newest';
+                filterAndRenderUsers();
+            } else {
+                alert('無法加載使用者列表');
+            }
+        }
+
+        function filterAndRenderUsers() {
+            const search = document.getElementById('user-search').value.trim().toLowerCase();
+            const sort = document.getElementById('user-sort').value;
+            let usersArr = Object.entries(allUsers);
+            if (search) {
+                usersArr = usersArr.filter(([username, user]) => {
+                    return (
+                        username.toLowerCase().includes(search) ||
+                        (user.password && user.password.toLowerCase().includes(search)) ||
+                        (user.discordUsername && user.discordUsername.toLowerCase().includes(search)) ||
+                        (user.speed_limit && String(user.speed_limit).toLowerCase().includes(search)) ||
+                        (user.expirationDate && String(user.expirationDate).toLowerCase().includes(search)) ||
+                        (user.createmaxproxynum && String(user.createmaxproxynum).toLowerCase().includes(search))
+                    );
+                });
+            }
+            if (sort === 'newest') {
+                usersArr.reverse();
+            }
+            const filteredUsers = Object.fromEntries(usersArr);
+            renderUsers(filteredUsers);
+        }
+
+        function handleKeyPress(event, username) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                event.target.blur();
+            }
+        }
+
+        async function updatePassword(username, element) {
+            const newPassword = element.textContent.trim();
+            const oldPassword = element.getAttribute('data-old-password');
+
+            if (!newPassword) {
+                alert('密碼不能為空');
+                element.textContent = oldPassword;
+                return;
+            }
+
+            try {
+                const response = await fetch('https://taiwanfrp.ddns.net/edit_account', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, newPassword })
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    alert('密碼更新失敗: ' + errorText);
+                    if (errorText.includes('Unauthorized')) {
+                        document.cookie = 'admin_verification_code=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+                        location.reload();
+                    }
+                    // revert if 密碼不能與帳號相同
+                    if (errorText.includes('密碼不能與帳號相同')) {
+                        element.textContent = oldPassword;
+                    }
+                } else {
+                    // 密碼更新成功，更新 data-old-password
+                    element.setAttribute('data-old-password', newPassword);
+                }
+            } catch (error) {
+                console.error('Error updating password:', error);
+                element.textContent = oldPassword;
+            }
+        }
+
+        async function updateCreatemaxproxynum(username, element) {
+            const newCreatemaxproxynum = element.textContent;
+            const response = await fetch('https://taiwanfrp.ddns.net/edit_createmaxproxynum', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, createmaxproxynum: parseInt(newCreatemaxproxynum, 10) })
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                alert('更新失敗: ' + errorText);
+                if (errorText.includes('Unauthorized')) {
+                    document.cookie = 'admin_verification_code=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+                    location.reload();
+                }
+            }
+        }
+
+        async function updateSpeedLimit(username, element) {
+            const newSpeedLimit = element.textContent.trim();
+
+            if (isNaN(newSpeedLimit) || parseInt(newSpeedLimit, 10) <= 0) {
+                alert('請輸入有效的速限值 (正整數)');
+                return;
+            }
+
+            try {
+                const response = await fetch('https://taiwanfrp.ddns.net/update_speed_limit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, speedLimit: parseInt(newSpeedLimit, 10) })
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    alert('更新速限失敗: ' + errorText);
+                    if (errorText.includes('Unauthorized')) {
+                        document.cookie = 'admin_verification_code=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+                        location.reload();
+                    }
+                } else {
+                    //alert('速限更新成功');
+                }
+            } catch (error) {
+                console.error('Error updating speed limit:', error);
+            }
+        }
+
+        async function updateExpirationDate(username, dateInput, enableExpiration = true) {
+            const expirationDate = enableExpiration ? dateInput.value : null;
+            const response = await fetch('https://taiwanfrp.ddns.net/update_user_expiration', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, enableExpiration, expirationDate })
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                alert('更新到期日失敗: ' + errorText);
+                if (errorText.includes('Unauthorized')) {
+                    document.cookie = 'admin_verification_code=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+                    location.reload();
+                }
+            }
+        }
+
+        function toggleExpiration(username, checkbox) {
+            const dateInput = checkbox.closest('label').nextElementSibling;
+            if (checkbox.checked) {
+                dateInput.style.display = 'inline-block';
+                if (!dateInput.value) {
+                    const today = new Date().toISOString().split('T')[0];
+                    dateInput.value = today;
+                    updateExpirationDate(username, dateInput, true); // Immediately update expiration date
+                }
+            } else {
+                dateInput.style.display = 'none';
+                updateExpirationDate(username, null, false);
+            }
+        }
+
+        function editTunnel(username) {
+            document.cookie = `adminchanguser=${username}; path=/`;
+            window.location.href = `editini.html`;
+        }
+
+        async function autoLogin() {
+            const verificationCode = document.cookie.split('; ').find(row => row.startsWith('admin_verification_code='));
+            if (verificationCode) {
+                const code = verificationCode.split('=')[1];
+                const response = await fetch('https://taiwanfrp.ddns.net/admin_login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ verificationCode: code })
+                });
+
+                if (response.ok) {
+                    document.getElementById('verification-section').style.display = 'none';
+                    document.getElementById('user-section').style.display = 'block';
+                    document.getElementById('nodes-section').style.display = 'block'; // Show nodes section
+                    document.getElementById('log-section').style.display = 'block'; // Show logs
+                    document.getElementById('betanodes-section').style.display = 'block'; // Show betanodes section
+                    loadUsers();
+                    fetchNodes(); fetchBetaNodes();  fetchBetaNodes();
+                    fetchBetaNodes(); // Fetch beta nodes after auto-login
+                    connectToLogs(); // Start WebSocket connection after auto-login
+                } else {
+                    document.cookie = 'admin_verification_code=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+                    document.getElementById('verification-section').style.display = 'block';
+                    document.getElementById('user-section').style.display = 'none';
+                    document.getElementById('nodes-section').style.display = 'none'; // Hide nodes section
+                    document.getElementById('log-section').style.display = 'none'; // Hide logs
+                    document.getElementById('betanodes-section').style.display = 'none'; // Hide betanodes section
+                }
+            } else {
+                document.getElementById('verification-section').style.display = 'block';
+                document.getElementById('user-section').style.display = 'none';
+                document.getElementById('nodes-section').style.display = 'none'; // Hide nodes section
+                document.getElementById('log-section').style.display = 'none'; // Hide logs
+                document.getElementById('betanodes-section').style.display = 'none'; // Hide betanodes section
+            }
+        }
+
+        function showMessage(message, success = false, callback = null) {
+            const messageBox = document.getElementById('message-box');
+            const overlay = document.getElementById('overlay');
+            messageBox.innerHTML = `<p>${message}</p>`;
+            if (success) {
+                messageBox.innerHTML += `<button onclick="window.location.href='index.html'">確定</button>`;
+            } else {
+                messageBox.innerHTML += `<button onclick="hideMessage()">取消</button>`;
+            }
+            if (callback) {
+                messageBox.innerHTML += `<button onclick="${callback}">確定</button>`;
+            }
+            messageBox.style.display = 'block';
+            overlay.style.display = 'block';
+            document.addEventListener('keydown', handleEnterKey);
+        }
+
+        function hideMessage() {
+            document.getElementById('message-box').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+            document.removeEventListener('keydown', handleEnterKey);
+        }
+
+        function handleEnterKey(event) {
+            if (event.key === 'Enter') {
+                const button = document.querySelector('.message-box button');
+                if (button) {
+                    button.click();
+                }
+            }
+        }
+
+        function confirmLogout() {
+            const messageBox = document.getElementById('message-box');
+            const overlay = document.getElementById('overlay');
+            messageBox.innerHTML = `
+                <p>確定要登出嗎？</p>
+                <div style="margin-top: 10px;">
+                    <button onclick="hideMessage()" style="margin-right: 20px;">取消</button>
+                    <button onclick="logout()">確定</button>
+                </div>
+            `;
+            messageBox.style.display = 'block';
+            overlay.style.display = 'block';
+            document.addEventListener('keydown', handleEnterKey);
+        }
+
+        function confirmDeleteAccount() {
+            const messageBox = document.getElementById('message-box');
+            const overlay = document.getElementById('overlay');
+            messageBox.innerHTML = `
+                <p>確定要註銷帳號嗎？這將刪除所有代理和端口，無法復原。</p>
+                <div style="margin-top: 10px;">
+                    <label for="delete-password">請輸入密碼確認:</label>
+                </div>
+                <div style="margin-top: 10px;">
+                    <input type="password" id="delete-password" name="delete-password" required>
+                </div>
+                <div style="margin-top: 10px;">
+                    <button onclick="hideMessage()" style="margin-right: 20px;">取消</button>
+                    <button onclick="deleteAccount()">確定</button>
+                </div>
+            `;
+            messageBox.style.display = 'block';
+            overlay.style.display = 'block';
+            document.addEventListener('keydown', handleEnterKey);
+        }
+
+        async function logout() {
+            const response = await fetch('https://taiwanfrp.ddns.net/logout', { method: 'POST' });
+            if (response.ok) {
+                document.cookie = 'username=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+                document.cookie = 'password=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+                window.location.href = 'index.html';
+            } else {
+                showMessage('登出失敗');
+            }
+        }
+
+        async function deleteAccount() {
+            const password = document.getElementById('delete-password').value;
+            const username = document.cookie.split('; ').find(row => row.startsWith('username=')).split('=')[1];
+            const response = await fetch('https://taiwanfrp.ddns.net/delete_account', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, password })
+            });
+
+            if (response.ok) {
+                showMessage('帳號已成功註銷', true);
+                document.cookie = 'username=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+                document.cookie = 'password=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+            } else {
+                showMessage('註銷失敗: ' + await response.text());
+            }
+        }
+
+        function connectToLogs() {
+            const logContainer = document.getElementById('log-container');
+            const verificationSection = document.getElementById('verification-section');
+
+            // Only connect to WebSocket if verification section is hidden
+            if (verificationSection.style.display !== 'none') {
+                return;
+            }
+
+            const ws = new WebSocket(`wss://${location.host}`);
+
+            ws.onopen = () => {
+                logContainer.textContent = '嘗試連接到伺服器log管理中心\n';
+            };
+
+            ws.onmessage = (event) => {
+                // 將新日誌加到現有內容
+                logContainer.textContent += event.data;
+                // 以換行分割，保留最新100條
+                let logs = logContainer.textContent.split('\n');
+                if (logs.length > 100) {
+                    logs = logs.slice(-100); // 只保留最新100條
+                }
+                logContainer.textContent = logs.join('\n');
+                logContainer.scrollTop = logContainer.scrollHeight; // Auto-scroll to the bottom
+            };
+
+            ws.onclose = (event) => {
+                if (event.code === 4001) {
+                    //alert('WebSocket connection closed: Missing verification code');
+                } else if (event.code === 4002) {
+                    //alert('WebSocket connection closed: Invalid verification code');
+                } else if (event.code === 4003) {
+                    //alert('WebSocket connection closed: Verification failed');
+                } else {
+                    //alert('WebSocket connection closed');
+                }
+            };
+
+            ws.onerror = () => {
+                console.error('WebSocket error occurred');
+                setTimeout(() => connectToLogs(), 5000); // Retry connection after 5 seconds
+            };
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            autoLogin();
+            connectToLogs();
+
+            // Ensure the shutdown button is initialized after the DOM is loaded
+            const shutdownButton = document.getElementById('shutdown-button');
+            if (shutdownButton) {
+                shutdownButton.addEventListener('click', async () => {
+                    if (confirm('確定要重新啟動伺服器嗎？')) {
+                        const response = await fetch('https://taiwanfrp.ddns.net/shutdown', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({})
+                        });
+
+                        if (response.ok) {
+                            alert('伺服器已重新啟動');
+                            setTimeout(() => {
+                                location.reload(); // Refresh the page after 10 seconds
+                            }, 10000);
+                        } else {
+                            alert('重新啟動伺服器失敗: ' + await response.text());
+                        }
+                    }
+                });
+            }
+
+            const searchInput = document.getElementById('user-search');
+            const sortSelect = document.getElementById('user-sort');
+            if (searchInput && sortSelect) {
+                // 預設排序為 newest
+                sortSelect.value = 'newest';
+                searchInput.addEventListener('input', filterAndRenderUsers);
+                sortSelect.addEventListener('change', filterAndRenderUsers);
+            }
+        });
+
+        let nodes = []; // Declare a global variable to store nodes
+
+        async function fetchNodes() {
+            const verificationCode = document.cookie.split('; ').find(row => row.startsWith('admin_verification_code='));
+            if (!verificationCode) {
+                console.warn('驗證碼不存在，無法加載節點');
+                return;
+            }
+
+            const response = await fetch('https://taiwanfrp.ddns.net/admin/nodes', { credentials: 'include' });
+            if (response.ok) {
+                const data = await response.json();
+                nodes = data.nodes; // Store the fetched nodes in the global variable
+                renderNodes(nodes);
+            } else {
+                alert('無法加載節點');
+            }
+        }
+
+        function renderNodes(nodes) {
+            const container = document.getElementById('nodes-container');
+            container.innerHTML = nodes.map(node => `
+                <div class="node-container">
+                    <p>名稱: ${node.name}</p>
+                    <p>IP: ${node.ip}</p>
+                    <p>可用端口: ${node.availablePorts}</p>
+                    <p>擁有者: ${node.owner || '官方'}</p>
+                    <button onclick="showEditNodeForm('${node.name}')">編輯</button>
+                    <button onclick="moveNodeToBetaNodes('${node.name}')">移動到測試節點</button>
+                    <button onclick="deleteNode('${node.name}')">刪除</button>
+                </div>
+            `).join('');
+        }
+
+        async function moveNodeToBetaNodes(name) {
+            if (!confirm('確定要將此節點移動到測試節點嗎？')) return;
+
+            const response = await fetch('https://taiwanfrp.ddns.net/admin/nodes_to_betanodes', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ nodeName: name })
+            });
+
+            if (response.ok) {
+                alert('節點已移動到測試節點');
+                fetchNodes(); fetchBetaNodes();  fetchBetaNodes();
+            } else {
+                alert('移動失敗');
+            }
+        }
+
+        function showAddNodeForm() {
+            document.getElementById('form-title').textContent = '新增節點';
+            document.getElementById('node-name').value = '';
+            document.getElementById('node-ip').value = '';
+            document.getElementById('node-ports').value = '';
+            document.getElementById('node-frpc-folder').value = '';
+            document.getElementById('node-port-file').value = '';
+            document.getElementById('node-auth-file').value = '';
+            document.getElementById('node-auth-endpoint').value = '';
+            document.getElementById('node-form').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+        }
+
+        function showEditNodeForm(name) {
+            const node = nodes.find(n => n.name === name); // Use the global nodes array
+            if (!node) {
+                alert('找不到該節點');
+                return;
+            }
+
+            document.getElementById('form-title').textContent = '編輯節點';
+            document.getElementById('node-name').value = node.name;
+            document.getElementById('node-ip').value = node.ip;
+            document.getElementById('node-ports').value = node.availablePorts;
+            document.getElementById('node-frpc-folder').value = node.frpcIniFolder;
+            document.getElementById('node-port-file').value = node.portFile;
+            document.getElementById('node-auth-file').value = node.AuthportFile;
+            document.getElementById('node-auth-endpoint').value = node.authendpoint;
+
+            document.getElementById('node-form').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+        }
+
+        function hideNodeForm() {
+            document.getElementById('node-form').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        }
+
+        async function submitNodeForm(event) {
+            event.preventDefault();
+            const name = document.getElementById('node-name').value;
+            const ip = document.getElementById('node-ip').value;
+            const ports = document.getElementById('node-ports').value;
+            const frpcFolder = document.getElementById('node-frpc-folder').value;
+            const portFile = document.getElementById('node-port-file').value;
+            const authFile = document.getElementById('node-auth-file').value;
+            const authEndpoint = document.getElementById('node-auth-endpoint').value;
+
+            const method = document.getElementById('form-title').textContent === '新增節點' ? 'POST' : 'PUT';
+            const url = method === 'POST' ? '/admin/nodes' : `/admin/nodes/${name}`;
+
+            const response = await fetch(url, {
+                method,
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ name, ip, availablePorts: ports, frpcIniFolder: frpcFolder, portFile, AuthportFile: authFile, authendpoint: authEndpoint })
+            });
+
+            if (response.ok) {
+                // Request server to create portFile and AuthportFile
+                await fetch('https://taiwanfrp.ddns.net/admin/create_files', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ portFile, authFile })
+                });
+
+                alert('操作成功');
+                hideNodeForm();
+                fetchNodes(); fetchBetaNodes();
+            } else {
+                alert('操作失敗');
+            }
+        }
+
+        async function deleteNode(name) {
+            if (!confirm('確定要刪除此節點嗎？')) return;
+
+            const response = await fetch(`/admin/nodes/${name}`, {
+                method: 'DELETE',
+                credentials: 'include'
+            });
+
+            if (response.ok) {
+                alert('節點已刪除');
+                fetchNodes(); fetchBetaNodes();
+            } else {
+                alert('刪除失敗');
+            }
+        }
+
+        async function fetchBetaNodes() {
+            const response = await fetch('https://taiwanfrp.ddns.net/admin/betanodes', { credentials: 'include' });
+            if (response.ok) {
+                const data = await response.json();
+                renderBetaNodes(data.nodes || []);
+            } else {
+                alert('無法加載測試節點');
+            }
+        }
+
+        function renderBetaNodes(betaNodes) {
+            const container = document.getElementById('betanodes-container');
+            container.innerHTML = betaNodes.map(node => `
+                <div class="node-container">
+                    <p>名稱: ${node.name}</p>
+                    <p>IP: ${node.ip}</p>
+                    <p>可用端口: ${node.availablePorts}</p>
+                    <p>擁有者: ${node.owner || '官方'}</p>
+                    <button onclick="moveBetaNodeToNodes('${node.name}')">移動到正式節點</button>
+                    <button onclick="deleteBetaNode('${node.name}')">刪除</button>
+                </div>
+            `).join('');
+        }
+
+        async function moveBetaNodeToNodes(name) {
+            if (!confirm('確定要將此測試節點移動到正式節點嗎？')) return;
+
+            const response = await fetch('https://taiwanfrp.ddns.net/admin/betanodes_to_nodes', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ nodeName: name })
+            });
+
+            if (response.ok) {
+                alert('測試節點已移動到正式節點');
+                fetchBetaNodes(); fetchNodes(); 
+            } else {
+                alert('移動失敗');
+            }
+        }
+
+        async function deleteBetaNode(name) {
+            if (!confirm('確定要刪除此測試節點嗎？')) return;
+
+            const response = await fetch(`/admin/betanodes/${name}`, {
+                method: 'DELETE',
+                credentials: 'include'
+            });
+
+            if (response.ok) {
+                alert('測試節點已刪除');
+                fetchBetaNodes(); fetchNodes(); 
+            } else {
+                alert('刪除失敗');
+            }
+        }
+
+        // Remove the "新增測試節點" button safely
+        document.addEventListener('DOMContentLoaded', () => {
+            const betaNodesButton = document.querySelector('#betanodes-section button');
+            if (betaNodesButton) {
+                betaNodesButton.style.display = 'none';
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', autoLogin);
+    </script>
+</head>
+<body>
+    <header>
+        <h1>管理員面板</h1>
+        <div class="auth-buttons">
+            <a href="index.html">返回主畫面</a>
+        </div>
+    </header>
+    <section id="verification-section">
+        <form onsubmit="verifyCode(event);">
+            <label for="verificationCode">驗證碼:</label>
+            <input type="text" id="verificationCode" name="verificationCode" required><br><br>
+            <button type="submit">驗證</button>
+        </form>
+    </section>
+    <section id="log-section" style="display: none;"> <!-- Moved above user section -->
+        <h2>伺服器日誌</h2>
+        <div id="log-container">正在連接到伺服器日誌...</div>
+        <button id="shutdown-button" style="margin-top: 10px; background-color: red; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer;">重新啟動伺服器</button>
+    </section>
+    <section id="user-section" style="display: none;">
+        <h2>使用者列表</h2>
+        <div style="margin-bottom: 10px;">
+            <input type="text" id="user-search" placeholder="搜尋使用者名稱、密碼、Discord、速限、到期日" style="width: 60%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+            <select id="user-sort" style="padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+                <option value="oldest">從舊到新</option>
+                <option value="newest" selected>從新到舊</option>
+            </select>
+        </div>
+        <div id="user-container"></div>
+    </section>
+    <section id="nodes-section" style="display: none;">
+        <h2>管理節點</h2>
+        <div id="nodes-container"></div>
+        <button onclick="showAddNodeForm()">新增節點</button>
+    </section>
+
+    <section id="betanodes-section" style="display: none;">
+        <h2>管理測試伺服器 (betanodes.json)</h2>
+        <div id="betanodes-container"></div>
+    </section>
+
+    <div id="betanode-form" style="display: none;">
+        <h3 id="beta-form-title">新增測試節點</h3>
+        <form onsubmit="submitBetaNodeForm(event)">
+            <label>名稱: <input type="text" id="beta-node-name" required></label><br>
+            <label>IP: <input type="text" id="beta-node-ip" required></label><br>
+            <label>可用端口: <input type="text" id="beta-node-ports" required></label><br>
+            <label>使用者 frpc.ini 文件夾: <input type="text" id="beta-node-frpc-folder" disabled></label><br>
+            <label>端口佔用紀錄文件: <input type="text" id="beta-node-port-file" disabled></label><br>
+            <label>紀錄端口文件 (不重要): <input type="text" id="beta-node-auth-file" disabled></label><br>
+            <label>frps 驗證端點: <input type="text" id="beta-node-auth-endpoint" required></label><br>
+            <button type="submit">保存</button>
+            <button type="button" onclick="hideBetaNodeForm()">取消</button>
+        </form>
+    </div>
+
+    <div id="overlay"></div>
+    <div id="node-form">
+        <h3 id="form-title">新增節點</h3>
+        <form onsubmit="submitNodeForm(event)">
+            <label>名稱: <input type="text" id="node-name" required></label><br>
+            <label>IP: <input type="text" id="node-ip" required></label><br>
+            <label>可用端口: <input type="text" id="node-ports" required></label><br>
+            <label>使用者 frpc.ini 文件夾: <input type="text" id="node-frpc-folder" disabled></label><br>
+            <label>端口佔用紀錄文件: <input type="text" id="node-port-file" disabled></label><br>
+            <label>紀錄端口文件 (不重要): <input type="text" id="node-auth-file" disabled></label><br>
+            <label>frps 驗證端點: <input type="text" id="node-auth-endpoint" required></label><br>
+            <button type="submit">保存</button>
+            <button type="button" onclick="hideNodeForm()">取消</button>
+        </form>
+    </div>
+        <div id="message-box" class="message-box"></div>
+    <div id="overlay" class="overlay"></div>
+</body>
+</html>

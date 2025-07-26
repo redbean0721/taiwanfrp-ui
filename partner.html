@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>成為TAIWANFRP節點合作夥伴 - TAIWANFRP</title>
+    <link rel="icon" href="img/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url('img/background.png');
+            background-size: cover;
+            color: #000; /* 修改文字顏色為黑色 */
+            overflow-x: hidden;
+        }
+
+        header {
+            background-color: #fff;
+            color: #000; /* 修改文字顏色為黑色 */
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            padding-top: 60px;
+            text-align: center;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #000; /* 修改文字顏色為黑色 */
+        }
+
+        form input, form button {
+            width: 95%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        form button {
+            background-color: #333;
+            color: #ffbf00;
+            border: none;
+            cursor: pointer;
+            display: block; /* Make the button a block element */
+            margin: 0 auto; /* Center the button horizontally */
+        }
+
+        form button:hover {
+            background-color: #555;
+        }
+
+        section {
+            padding: 20px;
+            max-width: 600px;
+            margin: 20px auto;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        #success-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.9);
+            color: #000; /* 修改文字顏色為黑色 */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            text-align: center;
+        }
+
+        #success-popup button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #333;
+            color: #ffbf00;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #success-popup button:hover {
+            background-color: #555;
+        }
+
+        #overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        /* 修改 frps.ini 預覽區域的樣式 */
+        #frps-content {
+            background: #000; /* 設定背景為黑色 */
+            color: #ffbf00; /* 設定文字顏色為黃色 */
+            padding: 10px;
+            border-radius: 4px;
+            text-align: left;
+            overflow-x: auto;
+            overflow-y: auto !important; /* Allow vertical scrolling */
+            max-height: 80vh !important; /* Limit height to 80% of the viewport */
+        }
+
+        form input:invalid {
+            border-color: red;
+        }
+
+        form input:valid {
+            border-color: green;
+        }
+
+        form .input-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        form .input-group input {
+            flex: 1;
+        }
+
+        #edit-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            z-index: 1001;
+            width: 80%;
+            max-width: 600px;
+        }
+
+        #edit-popup input[disabled] {
+            background-color: #f5f5f5;
+            color: #999;
+            cursor: not-allowed;
+        }
+
+        #edit-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        /* 域名開關與輸入匡樣式（參考 editini.html） */
+        .domain-switch {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .domain-switch input[type="checkbox"] {
+            display: none;
+        }
+
+        .proxy-toggle {
+            position: relative;
+            width: 50px;
+            height: 25px;
+            background-color: gray;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+
+        .proxy-toggle::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 21px;
+            height: 21px;
+            background-color: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+
+        .proxy-toggle.enabled {
+            background-color: green;
+        }
+
+        .proxy-toggle.enabled::before {
+            transform: translateX(25px);
+        }
+
+        .domain-input-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+
+        .domain-input-group input[type="text"] {
+            flex: 1;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 8px;
+            font-size: 1em;
+        }
+
+        .domain-input-group span {
+            font-size: 1em;
+            color: #333;
+            margin-left: 2px;
+        }
+
+        .domain-error {
+            color: red;
+            font-size: 0.9em;
+            margin-top: -8px;
+            margin-bottom: 8px;
+        }
+
+        #custom-domain,
+        #edit-custom-domain {
+            text-align: right;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 8px 12px;
+            font-size: 1em;
+            background: #fff;
+            color: #333;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.07);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        #custom-domain:focus,
+        #edit-custom-domain:focus {
+            border-color: #ffbf00;
+            box-shadow: 0 0 4px #ffbf0033;
+            outline: none;
+        }
+    </style>
+    <script>
+        let lastSubmittedNodeName = '';
+        let _originalDomain = '';
+        let _originalDomainEnabled = false;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const username = document.cookie.split('; ').find(row => row.startsWith('username='));
+            const password = document.cookie.split('; ').find(row => row.startsWith('password='));
+
+            if (!username || !password) {
+                alert('請先登入！');
+                window.location.href = 'login.html';
+                return;
+            }
+        });
+
+        function toggleDomainSwitch(type) {
+            if (type === 'apply') {
+                const toggle = document.getElementById('use-domain-toggle');
+                const checkbox = document.getElementById('use-domain-checkbox');
+                checkbox.checked = !checkbox.checked;
+                toggle.classList.toggle('enabled', checkbox.checked);
+                document.getElementById('custom-domain-group').style.display = checkbox.checked ? 'block' : 'none';
+                updateNodeIpLabel('apply');
+            } else {
+                const toggle = document.getElementById('edit-use-domain-toggle');
+                const checkbox = document.getElementById('edit-use-domain-checkbox');
+                checkbox.checked = !checkbox.checked;
+                toggle.classList.toggle('enabled', checkbox.checked);
+                document.getElementById('edit-custom-domain-group').style.display = checkbox.checked ? 'block' : 'none';
+                updateNodeIpLabel('edit');
+            }
+        }
+
+        function toggleDomainInput(type) {
+            // 保持原有API兼容
+            if (type === 'apply') {
+                const toggle = document.getElementById('use-domain-toggle');
+                const checkbox = document.getElementById('use-domain-checkbox');
+                toggle.classList.toggle('enabled', checkbox.checked);
+                document.getElementById('custom-domain-group').style.display = checkbox.checked ? 'block' : 'none';
+                updateNodeIpLabel('apply');
+            } else {
+                const toggle = document.getElementById('edit-use-domain-toggle');
+                const checkbox = document.getElementById('edit-use-domain-checkbox');
+                toggle.classList.toggle('enabled', checkbox.checked);
+                document.getElementById('edit-custom-domain-group').style.display = checkbox.checked ? 'block' : 'none';
+                updateNodeIpLabel('edit');
+            }
+        }
+
+        function updateNodeIpLabel(type) {
+            if (type === 'apply') {
+                const checkbox = document.getElementById('use-domain-checkbox');
+                const label = document.getElementById('node-ip-label');
+                if (checkbox.checked) {
+                    label.textContent = '節點 IP(域名對應IP):';
+                } else {
+                    label.textContent = '節點 IP:';
+                }
+            } else {
+                const checkbox = document.getElementById('edit-use-domain-checkbox');
+                const label = document.getElementById('edit-node-ip-label');
+                if (checkbox.checked) {
+                    label.textContent = '節點 IP(域名對應IP):';
+                } else {
+                    label.textContent = '節點 IP:';
+                }
+            }
+        }
+
+        async function applyNode(event) {
+            event.preventDefault();
+
+            const username = document.cookie.split('; ').find(row => row.startsWith('username=')).split('=')[1];
+            const password = document.cookie.split('; ').find(row => row.startsWith('password=')).split('=')[1];
+            const nodeName = document.getElementById('node-name').value;
+            const nodeIp = document.getElementById('node-ip').value;
+            const nodePortsStart = document.getElementById('node-ports-start').value;
+            const nodePortsEnd = document.getElementById('node-ports-end').value;
+            const nodeAlias = document.getElementById('node-alias').value;
+            const useDomain = document.getElementById('use-domain-checkbox').checked;
+            const customDomain = document.getElementById('custom-domain').value.trim();
+
+            lastSubmittedNodeName = nodeName; // Store the submitted node name
+
+            try {
+                let nodeIpToSend = nodeIp;
+                if (useDomain && customDomain) {
+                    nodeIpToSend = customDomain + '.taiwanfrp.me';
+                }
+                const response = await fetch('https://taiwanfrp.ddns.net/apply_node', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password, nodeName, nodeIp: nodeIpToSend, nodePorts: `${nodePortsStart}-${nodePortsEnd}`, nodeAlias })
+                });
+
+                if (response.ok) {
+                    if (useDomain && customDomain) {
+                        const domainRes = await fetch('https://taiwanfrp.ddns.net/node_add_domain', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                username, password,
+                                connect_addr: nodeIp,
+                                custom_domain: customDomain,
+                                nodeName
+                            })
+                        });
+                        if (!domainRes.ok) {
+                            const errorText = await domainRes.text();
+                            if (
+                                domainRes.status === 400 &&
+                                (errorText.includes('網域已被其他人佔用') || errorText.includes('該主域名已被 SRV 佔用，不能創建 A/CNAME'))
+                            ) {
+                                const errorDiv = document.getElementById('custom-domain-error');
+                                errorDiv.textContent = '網域已被其他人佔用';
+                                errorDiv.style.display = 'block';
+                                return; // 不正常保存
+                            }
+                        }
+                    }
+                    showPopup();
+                    lastSubmittedNodeName = document.getElementById('node-name').value; // Update lastSubmittedNodeName before clearing the form
+                    console.log('Updated lastSubmittedNodeName:', lastSubmittedNodeName); // 確認更新的值
+
+                    // Clear form fields
+                    document.getElementById('node-name').value = '';
+                    document.getElementById('node-ip').value = '';
+                    document.getElementById('node-ports-start').value = '';
+                    document.getElementById('node-ports-end').value = '';
+                    document.getElementById('node-alias').value = '';
+                } else {
+                    const errorMessage = await response.text();
+                    alert('節點申請失敗: ' + errorMessage);
+                }
+            } catch (error) {
+                console.error('Error applying for node:', error);
+                alert('節點申請失敗，請稍後再試: ' + error.message);
+            }
+        }
+
+        async function openEditPopup(node) {
+            document.getElementById('edit-node-name').value = node.name;
+            // 預設先用 node.ip
+            document.getElementById('edit-node-ip').value = node.ip;
+            document.getElementById('edit-node-ports-start').value = node.availablePorts.split('-')[0];
+            document.getElementById('edit-node-ports-end').value = node.availablePorts.split('-')[1];
+            document.getElementById('edit-node-owner').value = node.owner || '官方';
+            document.getElementById('edit-node-alias').value = node.frpcIniFolder;
+
+            // 域名查詢
+            const username = document.cookie.split('; ').find(row => row.startsWith('username=')).split('=')[1];
+            const password = document.cookie.split('; ').find(row => row.startsWith('password=')).split('=')[1];
+            const nodeName = node.name;
+            try {
+                const res = await fetch('https://taiwanfrp.ddns.net/what_nodes_domain', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password, nodeName })
+                });
+                const data = await res.json();
+                if (data.domain && Array.isArray(data.domains) && data.domains.length > 0) {
+                    document.getElementById('edit-use-domain-checkbox').checked = true;
+                    document.getElementById('edit-use-domain-toggle').classList.add('enabled');
+                    document.getElementById('edit-custom-domain-group').style.display = 'block';
+                    document.getElementById('edit-custom-domain').value = data.domains[0].domain_value.replace('.taiwanfrp.me', '');
+                    document.getElementById('edit-node-ip').value = data.domains[0].ip;
+                    // 記住原始域名和 switch 狀態
+                    window._originalDomain = data.domains[0].domain_value.replace('.taiwanfrp.me', '');
+                    window._originalDomainEnabled = true;
+                    updateNodeIpLabel('edit');
+                } else {
+                    document.getElementById('edit-use-domain-checkbox').checked = false;
+                    document.getElementById('edit-use-domain-toggle').classList.remove('enabled');
+                    document.getElementById('edit-custom-domain-group').style.display = 'none';
+                    document.getElementById('edit-custom-domain').value = '';
+                    // 沒有原始域名
+                    window._originalDomain = '';
+                    window._originalDomainEnabled = false;
+                    updateNodeIpLabel('edit');
+                }
+            } catch (e) {
+                document.getElementById('edit-use-domain-checkbox').checked = false;
+                document.getElementById('edit-use-domain-toggle').classList.remove('enabled');
+                document.getElementById('edit-custom-domain-group').style.display = 'none';
+                document.getElementById('edit-custom-domain').value = '';
+                window._originalDomain = '';
+                window._originalDomainEnabled = false;
+                updateNodeIpLabel('edit');
+            }
+
+            document.getElementById('edit-popup').style.display = 'block';
+            document.getElementById('edit-overlay').style.display = 'block';
+        }
+
+        async function saveNodeChanges(event) {
+            event.preventDefault();
+
+            const nodeName = document.getElementById('edit-node-name').value;
+            const newIp = document.getElementById('edit-node-ip').value;
+            const newPortsStart = document.getElementById('edit-node-ports-start').value;
+            const newPortsEnd = document.getElementById('edit-node-ports-end').value;
+            const useDomain = document.getElementById('edit-use-domain-checkbox').checked;
+            const customDomain = document.getElementById('edit-custom-domain').value.trim();
+
+            const username = document.cookie.split('; ').find(row => row.startsWith('username=')).split('=')[1];
+            const password = document.cookie.split('; ').find(row => row.startsWith('password=')).split('=')[1];
+
+            const isApprovedNode = document.getElementById('approved-nodes').innerHTML.includes(nodeName);
+
+            async function saveChangesToServer(nodeName, newIp, newPortsStart, newPortsEnd, username, password, useDomain, customDomain) {
+                try {
+                    let nodeIpToSend = newIp;
+                    if (useDomain && customDomain) {
+                        nodeIpToSend = customDomain + '.taiwanfrp.me';
+                    }
+                    // 先判斷是否需要先呼叫 node_add_domain
+                    if (useDomain && customDomain) {
+                        const domainRes = await fetch('https://taiwanfrp.ddns.net/node_add_domain', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                username, password,
+                                connect_addr: newIp,
+                                custom_domain: customDomain,
+                                nodeName
+                            })
+                        });
+                        if (!domainRes.ok) {
+                            const errorText = await domainRes.text();
+                            const errorDiv = document.getElementById('edit-custom-domain-error');
+                            errorDiv.textContent = errorText || '網域服務端錯誤';
+                            errorDiv.style.display = 'block';
+                            return; // 不繼續保存
+                        } else {
+                            // 清除錯誤提示
+                            const errorDiv = document.getElementById('edit-custom-domain-error');
+                            errorDiv.textContent = '';
+                            errorDiv.style.display = 'none';
+                        }
+                    }
+                    // 域名通過或不啟用域名才繼續保存
+                    const response = await fetch('https://taiwanfrp.ddns.net/edit_node', {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username, password, nodeName, newIp: nodeIpToSend, newPorts: `${newPortsStart}-${newPortsEnd}` })
+                    });
+
+                    if (response.ok) {
+                        alert('節點更新成功');
+                        closeEditPopup();
+                        refreshNodes();
+                    } else {
+                        alert('節點更新失敗: ' + await response.text());
+                    }
+                } catch (error) {
+                    console.error('Error editing node:', error);
+                    alert('節點更新失敗，請稍後再試');
+                }
+            }
+
+            // 域名刪除判斷
+            if (window._originalDomainEnabled && !useDomain && window._originalDomain) {
+                // 執行刪除域名請求
+                try {
+                    await fetch('https://taiwanfrp.ddns.net/node_del_domain', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username, password, custom_domain: window._originalDomain })
+                    });
+                } catch (e) {
+                    console.error('刪除域名失敗', e);
+                }
+            }
+
+            if (isApprovedNode) {
+                const confirmationPopup = document.createElement('div');
+                confirmationPopup.id = 'confirmation-popup';
+                confirmationPopup.style.display = 'block';
+                confirmationPopup.style.position = 'fixed';
+                confirmationPopup.style.top = '50%';
+                confirmationPopup.style.left = '50%';
+                confirmationPopup.style.transform = 'translate(-50%, -50%)';
+                confirmationPopup.style.background = 'rgba(255, 255, 255, 0.9)';
+                confirmationPopup.style.color = '#000';
+                confirmationPopup.style.padding = '20px';
+                confirmationPopup.style.borderRadius = '8px';
+                confirmationPopup.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.2)';
+                confirmationPopup.style.zIndex = '1001'; // Adjusted z-index
+                confirmationPopup.style.textAlign = 'center';
+
+                const confirmationMessage = document.createElement('p');
+                confirmationMessage.innerHTML = `
+                    <strong>編輯後需要重新審核</strong><br>
+                    確定要保存編輯嗎？
+                `;
+                confirmationPopup.appendChild(confirmationMessage);
+
+                const buttonContainer = document.createElement('div');
+                buttonContainer.style.marginTop = '20px';
+                buttonContainer.style.display = 'flex';
+                buttonContainer.style.gap = '10px';
+                buttonContainer.style.justifyContent = 'center';
+
+                const confirmButton = document.createElement('button');
+                confirmButton.textContent = '確定';
+                confirmButton.style.padding = '10px 20px';
+                confirmButton.style.backgroundColor = '#2ecc71';
+                confirmButton.style.color = '#fff';
+                confirmButton.style.border = 'none';
+                confirmButton.style.borderRadius = '4px';
+                confirmButton.style.cursor = 'pointer';
+                confirmButton.onclick = async function () {
+                    document.body.removeChild(confirmationPopup);
+                    document.body.removeChild(overlay);
+                    window.scrollTo(0, 0); // Scroll to the top of the page
+                    await saveChangesToServer(nodeName, newIp, newPortsStart, newPortsEnd, username, password, useDomain, customDomain);
+                };
+
+                const cancelButton = document.createElement('button');
+                cancelButton.textContent = '取消';
+                cancelButton.style.padding = '10px 20px';
+                cancelButton.style.backgroundColor = '#e74c3c';
+                cancelButton.style.color = '#fff';
+                cancelButton.style.border = 'none';
+                cancelButton.style.borderRadius = '4px';
+                cancelButton.style.cursor = 'pointer';
+                cancelButton.onclick = function () {
+                    document.body.removeChild(confirmationPopup);
+                    document.body.removeChild(overlay);
+                };
+
+                buttonContainer.appendChild(confirmButton);
+                buttonContainer.appendChild(cancelButton);
+                confirmationPopup.appendChild(buttonContainer);
+
+                const overlay = document.createElement('div');
+                overlay.id = 'confirmation-overlay';
+                overlay.style.position = 'fixed';
+                overlay.style.top = '0';
+                overlay.style.left = '0';
+                overlay.style.width = '100%';
+                overlay.style.height = '100%';
+                overlay.style.background = 'rgba(0, 0, 0, 0.5)';
+                overlay.style.zIndex = '1001';
+                overlay.onclick = function () {
+                    document.body.removeChild(confirmationPopup);
+                    document.body.removeChild(overlay);
+                };
+
+                document.body.appendChild(overlay);
+                document.body.appendChild(confirmationPopup);
+            } else {
+                window.scrollTo(0, 0); // Scroll to the top of the page
+                await saveChangesToServer(nodeName, newIp, newPortsStart, newPortsEnd, username, password, useDomain, customDomain);
+            }
+        }
+
+        function showPopup() {
+            document.getElementById('overlay').style.display = 'block';
+            document.getElementById('success-popup').style.display = 'block';
+        }
+
+        function closePopup() {
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('success-popup').style.display = 'none';
+            refreshNodes(); // Refresh nodes after closing the popup
+        }
+
+        async function fetchFrpsIni(nodeName, username, password) {
+            try {
+                const response = await fetch('https://taiwanfrp.ddns.net/generate_frps_ini', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password, nodeName })
+                });
+
+                if (response.ok) {
+                    const frpsContent = await response.text();
+                    document.getElementById('frps-content').textContent = frpsContent;
+                    const blob = new Blob([frpsContent], { type: 'text/plain' });
+                    document.getElementById('download-link').href = URL.createObjectURL(blob);
+                    document.getElementById('frps-popup').style.display = 'block';
+                    document.getElementById('frps-overlay').style.display = 'block'; // Ensure overlay is displayed
+                } else {
+                    alert('生成失敗: ' + await response.text());
+                }
+            } catch (error) {
+                console.error('Error generating frps.ini:', error);
+                alert('生成失敗，請稍後再試');
+            }
+        }
+
+        const generateFrpsForm = document.getElementById('generate-frps-form');
+        if (generateFrpsForm) {
+            generateFrpsForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                const nodeName = document.getElementById('nodeName').value;
+
+                try {
+                    const response = await fetch('https://taiwanfrp.ddns.net/generate_frps_ini', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username, password, nodeName })
+                    });
+
+                    if (response.ok) {
+                        const frpsContent = await response.text();
+                        document.getElementById('frps-content').textContent = frpsContent;
+                        const blob = new Blob([frpsContent], { type: 'text/plain' });
+                        document.getElementById('download-link').href = URL.createObjectURL(blob);
+                        document.getElementById('frps-preview').style.display = 'block';
+                    } else {
+                        alert('生成失敗: ' + await response.text());
+                    }
+                } catch (error) {
+                    console.error('Error generating frps.ini:', error);
+                    alert('生成失敗，請稍後再試');
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', async function () {
+            const username = document.cookie.split('; ').find(row => row.startsWith('username=')).split('=')[1];
+            const password = document.cookie.split('; ').find(row => row.startsWith('password=')).split('=')[1];
+
+            async function fetchAndRenderNodes() {
+                try {
+                    const response = await fetch(`/get_nodes?username=${username}&password=${password}`, {
+                        method: 'GET',
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        renderNodes(data.approved, 'approved-nodes', true);
+                        renderNodes(data.pending, 'pending-nodes', false);
+                    } else {
+                        console.error('Failed to fetch nodes');
+                    }
+                } catch (error) {
+                    console.error('Error refreshing nodes:', error);
+                }
+            }
+
+            // Initial fetch
+            await fetchAndRenderNodes();
+
+            // Set interval to refresh every 5 seconds
+            setInterval(fetchAndRenderNodes, 5000);
+
+            // Apply form domain switch
+            const domainCheckbox = document.getElementById('use-domain-checkbox');
+            if (domainCheckbox) {
+                domainCheckbox.addEventListener('change', function () {
+                    updateNodeIpLabel('apply');
+                });
+                updateNodeIpLabel('apply');
+            }
+            // Edit form domain switch
+            const editDomainCheckbox = document.getElementById('edit-use-domain-checkbox');
+            if (editDomainCheckbox) {
+                editDomainCheckbox.addEventListener('change', function () {
+                    updateNodeIpLabel('edit');
+                });
+                updateNodeIpLabel('edit');
+            }
+        });
+
+        function startAutoReview(nodeName) {
+            const username = document.cookie.split('; ').find(row => row.startsWith('username=')).split('=')[1];
+            const password = document.cookie.split('; '). find(row => row.startsWith('password=')).split('=')[1];
+
+            showAutoReviewConfirmation(() => {
+                fetch('https://taiwanfrp.ddns.net/start_auto_look_node', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password, nodeName })
+                })
+                .then(response => {
+                    if (response.ok) {
+                        response.text().then(text => {
+                            alert('執行完畢: ' + text);
+                            refreshNodes(); // Immediately refresh approved and pending nodes
+                        });
+                    } else {
+                        response.text().then(text => alert('執行失敗: ' + text));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error starting auto review:', error);
+                    alert('執行失敗，稍後再試！');
+                });
+            });
+        }
+
+        function showAutoReviewConfirmation(onConfirm) {
+            const confirmationPopup = document.createElement('div');
+            confirmationPopup.id = 'auto-review-popup';
+            confirmationPopup.style.display = 'block';
+            confirmationPopup.style.position = 'fixed';
+            confirmationPopup.style.top = '50%';
+            confirmationPopup.style.left = '50%';
+            confirmationPopup.style.transform = 'translate(-50%, -50%)'; // Center the popup
+            confirmationPopup.style.width = '90%';
+            confirmationPopup.style.background = 'rgba(255, 255, 255, 0.9)';
+            confirmationPopup.style.color = '#000';
+            confirmationPopup.style.padding = '20px';
+            confirmationPopup.style.borderRadius = '8px';
+            confirmationPopup.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.2)';
+            confirmationPopup.style.zIndex = '1000';
+            confirmationPopup.style.textAlign = 'center'; // Center the text
+            confirmationPopup.style.overflowY = 'auto'; // Allow scrolling for content
+
+            const confirmationMessage = document.createElement('p');
+            confirmationMessage.innerHTML = `
+                <strong>frps 審核前確認清單</strong><br>
+                1. 7000 跟 7500 的 TCP 和 UDP 端口已經打開，並設定好所有防火牆。<br>
+                2. frps.ini 已經跟 frps 保存到同一個文件夾並正在執行。<br>
+                3. 你選擇啟用的端口的 TCP/UDP 都已經打開。
+            `;
+            confirmationPopup.appendChild(confirmationMessage);
+
+            const buttonContainer = document.createElement('div');
+            buttonContainer.style.marginTop = '20px';
+            buttonContainer.style.display = 'flex';
+            buttonContainer.style.gap = '10px';
+            buttonContainer.style.justifyContent = 'center';
+
+            const confirmButton = document.createElement('button');
+            confirmButton.textContent = '是，我都準備好了';
+            confirmButton.style.padding = '10px 20px';
+            confirmButton.style.backgroundColor = '#2ecc71';
+            confirmButton.style.color = '#fff';
+            confirmButton.style.border = 'none';
+            confirmButton.style.borderRadius = '4px';
+            confirmButton.style.cursor = 'pointer';
+            confirmButton.onclick = function () {
+                document.body.removeChild(confirmationPopup);
+                document.body.removeChild(overlay);
+                onConfirm();
+            };
+
+            const cancelButton = document.createElement('button');
+            cancelButton.textContent = '否，在給我一點時間';
+            cancelButton.style.padding = '10px 20px';
+            cancelButton.style.backgroundColor = '#e74c3c';
+            cancelButton.style.color = '#fff';
+            cancelButton.style.border = 'none';
+            cancelButton.style.borderRadius = '4px';
+            cancelButton.style.cursor = 'pointer';
+            cancelButton.onclick = function () {
+                document.body.removeChild(confirmationPopup);
+                document.body.removeChild(overlay);
+            };
+
+            buttonContainer.appendChild(confirmButton);
+            buttonContainer.appendChild(cancelButton);
+            confirmationPopup.appendChild(buttonContainer);
+
+            const overlay = document.createElement('div');
+            overlay.id = 'auto-review-overlay';
+            overlay.style.position = 'fixed';
+            overlay.style.top = '0';
+            overlay.style.left = '0';
+            overlay.style.width = '100%';
+            overlay.style.height = '100%';
+            overlay.style.background = 'rgba(0, 0, 0, 0.5)';
+            overlay.style.zIndex = '999';
+            overlay.onclick = function () {
+                document.body.removeChild(confirmationPopup);
+                document.body.removeChild(overlay);
+            };
+
+            document.body.appendChild(overlay);
+            document.body.appendChild(confirmationPopup);
+        }
+
+        function renderNodes(nodes, containerId, isApproved) {
+            const statusDescriptions = {
+                lookupport: '開始檢測伺服器在線狀態與frps.ini驗證系統(通常在幾秒內完成)',
+                serveroff: '伺服器沒有啟動或是被防火牆阻擋',
+                api7500off: '7500tcp/udp沒有啟動',
+                allportgood: '所有端口正常準備穩定度測試',
+                iperf3test: '正在穩定測試(測試將持續一小時，請勿關閉frps否則失敗！)',
+                alltestgood: '穩定測試成功，準備加入主伺服器',
+                iperf3testbad: '穩定度測試失敗，低品質伺服器，禁止上線',
+                authsysNotWork: '驗證系統未能正確配置！檢查frps.ini是否從官方下載。',
+                waiting_queue: '已加入自動審核隊列！等候其他節點審核完畢！',
+                '': '未開始審核' // Add default status for empty strings
+            };
+
+            const container = document.getElementById(containerId);
+            if (nodes.length === 0) {
+                container.innerHTML = isApproved 
+                    ? '<p>審核通過，已上線的節點會顯示在這。</p>' 
+                    : '<p>已申請，但還沒通過審核的節點會顯示在這。</p>';
+                return;
+            }
+
+            container.innerHTML = nodes.map(node => {
+                let statusMessage = statusDescriptions[node.status] || '未開始審核'; // Default to "未開始審核" if status is undefined
+                if (node.status && node.status.startsWith('firewall_block_')) {
+                    const port = node.status.split('_')[2];
+                    statusMessage = `${port}(可能更多)端口不在線上，禁止上線`;
+                } else if (node.status && node.status.startsWith('lookuping_')) {
+                    const ports = node.status.split('_')[1];
+                    statusMessage = `正在檢測 ${ports} 範圍內的端口上線狀態(每100個約20秒，總時長取決於開的端口數量)`;
+                }
+                return `
+                    <div style="background-color: rgba(255, 255, 255, 0.7); padding: 20px; border-radius: 8px; margin-bottom: 10px;">
+                        <p><strong>名稱:</strong> ${node.name}</p>
+                        <p><strong>IP:</strong> ${node.ip}</p>
+                        <p><strong>可用端口:</strong> ${node.availablePorts}</p>
+                        <p><strong>擁有者:</strong> ${node.owner || '官方'}</p>
+                        ${!isApproved ? `<p><strong>狀態:</strong> ${statusMessage}</p>` : ''}
+                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                            <button style="background-color: #ffbf00; color: #333; padding: 10px 20px; border-radius: 5px; cursor: pointer;" 
+                                onclick='openEditPopup(${JSON.stringify(node)})' 
+                                ${['lookupport', 'allportgood', 'iperf3test', 'alltestgood', 'waiting_queue'].includes(node.status) || (node.status && node.status.startsWith('lookuping_')) ? 'disabled' : ''}>
+                                編輯
+                            </button>
+                            <button style="background-color: #e74c3c; color: #fff; padding: 10px 20px; border-radius: 5px; cursor: pointer;" 
+                                onclick="deleteNode('${node.name}')" 
+                                ${['lookupport', 'allportgood', 'iperf3test', 'alltestgood', 'waiting_queue'].includes(node.status) || (node.status && node.status.startsWith('lookuping_')) ? 'disabled' : ''}>
+                                刪除
+                            </button>
+                            <button style="background-color: #3498db; color: #fff; padding: 10px 20px; border-radius: 5px; cursor: pointer;" 
+                                onclick="viewFrpsIni('${node.name}')">
+                                查看frps.ini
+                            </button>
+                            ${!isApproved ? `
+                                <button style="background-color: #2ecc71; color: #fff; padding: 10px 20px; border-radius: 5px; cursor: pointer;" 
+                                    onclick="startAutoReview('${node.name}')" 
+                                    ${['lookupport', 'allportgood', 'iperf3test', 'alltestgood', 'waiting_queue'].includes(node.status) || (node.status && node.status.startsWith('lookuping_')) ? 'disabled' : ''}>
+                                    開始自動審核
+                                </button>` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function editNode(nodeName) {
+            const newIp = prompt('請輸入新的 IP 地址:');
+            const newPorts = prompt('請輸入新的可用端口範圍 (格式: 10000-65535):');
+
+            if (!newIp || !newPorts) {
+                alert('IP 地址或端口範圍不能為空');
+                return;
+            }
+
+            const username = document.cookie.split('; ').find(row => row.startsWith('username=')).split('=')[1];
+            const password = document.cookie.split('; '). find(row => row.startsWith('password=')).split('=')[1];
+
+            try {
+                const response = await fetch('https://taiwanfrp.ddns.net/edit_node', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password, nodeName, newIp, newPorts })
+                });
+
+                if (response.ok) {
+                    alert('節點更新成功');
+                    location.reload();
+                } else {
+                    alert('節點更新失敗: ' + await response.text());
+                }
+            } catch (error) {
+                console.error('Error editing node:', error);
+                alert('節點更新失敗，請稍後再試');
+            }
+        }
+
+        async function deleteNode(nodeName) {
+            if (!confirm(`確定要刪除節點 ${nodeName} 嗎？`)) return;
+
+            const username = document.cookie.split('; ').find(row => row.startsWith('username=')).split('=')[1];
+            const password = document.cookie.split('; '). find(row => row.startsWith('password=')).split('=')[1];
+
+            try {
+                const response = await fetch('https://taiwanfrp.ddns.net/delete_node', {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password, nodeName })
+                });
+
+                if (response.ok) {
+                    //alert('節點刪除成功');
+                    location.reload();
+                } else {
+                    alert('節點刪除失敗: ' + await response.text());
+                }
+            } catch (error) {
+                console.error('Error deleting node:', error);
+                alert('節點刪除失敗，請稍後再試');
+            }
+        }
+
+        function viewFrpsIni(nodeName) {
+            const username = document.cookie.split('; ').find(row => row.startsWith('username=')).split('=')[1];
+            const password = document.cookie.split('; '). find(row => row.startsWith('password=')).split('=')[1];
+
+            fetchFrpsIni(nodeName, username, password);
+        }
+
+        function closeFrpsPopup() {
+            document.getElementById('frps-popup').style.display = 'none';
+            document.getElementById('frps-overlay').style.display = 'none'; // Ensure overlay is hidden
+        }
+
+        async function refreshNodes() {
+            const username = document.cookie.split('; ').find(row => row.startsWith('username=')).split('=')[1];
+            const password = document.cookie.split('; '). find(row => row.startsWith('password=')).split('=')[1];
+
+            try {
+                const response = await fetch(`/get_nodes?username=${username}&password=${password}`, {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    renderNodes(data.approved, 'approved-nodes', true);
+                    renderNodes(data.pending, 'pending-nodes', false);
+                } else {
+                    console.error('Failed to fetch nodes');
+                }
+            } catch (error) {
+                console.error('Error refreshing nodes:', error);
+            }
+        }
+
+        function validateIpOrDomain(input) {
+            const ipPattern = /^(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)$/;
+            const domainPattern = /^(?!:\/\/)([a-zA-Z0-9-_]+\.)+[a-zA-Z]{2,}$/;
+            return ipPattern.test(input.value) || domainPattern.test(input.value);
+        }
+
+        function validateAlias(input) {
+            const chinesePattern = /[\u4e00-\u9fa5]/;
+            return !chinesePattern.test(input.value);
+        }
+
+        function validateCustomDomain(input, isEdit = false) {
+            // 禁止空格和中文
+            const value = input.value;
+            const chinesePattern = /[\u4e00-\u9fa5]/;
+            const spacePattern = /\s/;
+            let error = '';
+            if (chinesePattern.test(value)) {
+                error = '域名不能包含中文';
+            } else if (spacePattern.test(value)) {
+                error = '域名不能包含空格';
+            }
+            const errorDiv = isEdit ? document.getElementById('edit-custom-domain-error') : document.getElementById('custom-domain-error');
+            if (error) {
+                errorDiv.textContent = error;
+                errorDiv.style.display = 'block';
+                input.setCustomValidity(error);
+            } else {
+                errorDiv.textContent = '';
+                errorDiv.style.display = 'none';
+                input.setCustomValidity('');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const ipInput = document.getElementById('node-ip');
+            const aliasInput = document.getElementById('node-alias');
+
+            ipInput.addEventListener('input', function () {
+                if (!validateIpOrDomain(ipInput)) {
+                    ipInput.setCustomValidity('請輸入有效的 IP 地址或域名');
+                } else {
+                    ipInput.setCustomValidity('');
+                }
+            });
+
+            aliasInput.addEventListener('input', function () {
+                if (!validateAlias(aliasInput)) {
+                    aliasInput.setCustomValidity('英文暱稱不能包含中文字符');
+                } else {
+                    aliasInput.setCustomValidity('');
+                }
+            });
+        });
+
+        function closeIntroModal() {
+            document.getElementById('intro-modal').style.display = 'none';
+        }
+
+        function handleDownloadClick() {
+            // 關閉 success-popup
+            closePopup();
+
+            // 彈出新視窗提示用戶
+            setTimeout(() => {
+                showDownloadConfirmation();
+            }, 500); // 延遲 500 毫秒以確保彈窗關閉後執行
+        }
+
+        function showErrorPopup(message) {
+            const errorPopup = document.createElement('div');
+            errorPopup.id = 'error-popup';
+            errorPopup.style.display = 'block';
+            errorPopup.style.position = 'fixed';
+            errorPopup.style.top = '50%';
+            errorPopup.style.left = '50%';
+            errorPopup.style.transform = 'translate(-50%, -50%)';
+            errorPopup.style.background = 'rgba(255, 255, 255, 0.9)';
+            errorPopup.style.color = '#000';
+            errorPopup.style.padding = '20px';
+            errorPopup.style.borderRadius = '8px';
+            errorPopup.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.2)';
+            errorPopup.style.zIndex = '1000';
+            errorPopup.style.textAlign = 'center';
+
+            const errorMessage = document.createElement('p');
+            errorMessage.textContent = message;
+            errorPopup.appendChild(errorMessage);
+
+            const closeButton = document.createElement('button');
+            closeButton.textContent = '關閉';
+            closeButton.style.marginTop = '10px';
+            closeButton.style.padding = '10px 20px';
+            closeButton.style.backgroundColor = '#333';
+            closeButton.style.color = '#ffbf00';
+            closeButton.style.border = 'none';
+            closeButton.style.borderRadius = '4px';
+            closeButton.style.cursor = 'pointer';
+            closeButton.onclick = function () {
+                document.body.removeChild(errorPopup);
+                document.getElementById('overlay').style.display = 'none';
+            };
+
+            errorPopup.appendChild(closeButton);
+
+            document.body.appendChild(errorPopup);
+            document.getElementById('overlay').style.display = 'block';
+        }
+
+        function showDownloadConfirmation(nodeName) {
+            const confirmationPopup = document.createElement('div');
+            confirmationPopup.id = 'confirmation-popup';
+            confirmationPopup.style.display = 'block';
+            confirmationPopup.style.position = 'fixed';
+            confirmationPopup.style.top = '50%';
+            confirmationPopup.style.left = '50%';
+            confirmationPopup.style.transform = 'translate(-50%, -50%)';
+            confirmationPopup.style.background = 'rgba(255, 255, 255, 0.9)';
+            confirmationPopup.style.color = '#000';
+            confirmationPopup.style.padding = '20px';
+            confirmationPopup.style.borderRadius = '8px';
+            confirmationPopup.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.2)';
+            confirmationPopup.style.zIndex = '1000';
+            confirmationPopup.style.textAlign = 'center';
+
+            const confirmationMessage = document.createElement('p');
+            confirmationMessage.textContent = '下載好節點了嗎？下一步，點擊查看 frps.ini 並下載。';
+            confirmationPopup.appendChild(confirmationMessage);
+
+            const confirmButton = document.createElement('button');
+            confirmButton.textContent = '確定';
+            confirmButton.style.marginTop = '10px';
+            confirmButton.style.padding = '10px 20px';
+            confirmButton.style.backgroundColor = '#333';
+            confirmButton.style.color = '#ffbf00';
+            confirmButton.style.border = 'none';
+            confirmButton.style.borderRadius = '4px';
+            confirmButton.style.cursor = 'pointer';
+            confirmButton.onclick = function () {
+                document.body.removeChild(confirmationPopup);
+                document.body.removeChild(overlay);
+            };
+
+            confirmationPopup.appendChild(confirmButton);
+
+            // 移除取消按鈕
+            const cancelButton = confirmationPopup.querySelector('button:nth-child(2)');
+            if (cancelButton) {
+                confirmationPopup.removeChild(cancelButton);
+            }
+
+            const overlay = document.createElement('div');
+            overlay.id = 'confirmation-overlay';
+            overlay.style.position = 'fixed';
+            overlay.style.top = '0';
+            overlay.style.left = '0';
+            overlay.style.width = '100%';
+            overlay.style.height = '100%';
+            overlay.style.background = 'rgba(0, 0, 0, 0.5)';
+            overlay.style.zIndex = '999';
+            overlay.onclick = function () {
+                document.body.removeChild(confirmationPopup);
+                document.body.removeChild(overlay);
+            };
+
+            document.body.appendChild(overlay);
+            document.body.appendChild(confirmationPopup);
+        }
+
+        function closeEditPopup() {
+            document.getElementById('edit-popup').style.display = 'none';
+            document.getElementById('edit-overlay').style.display = 'none';
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const introModal = document.getElementById('intro-modal');
+            const introShown = document.cookie.split('; ').find(row => row.startsWith('introShown='));
+
+            if (!introShown) {
+                introModal.style.display = 'block';
+                const expiryDate = new Date();
+                expiryDate.setTime(expiryDate.getTime() + (60 * 60 * 1000)); // 1 hour
+                document.cookie = `introShown=true; expires=${expiryDate.toUTCString()}; path=/`;
+            } else {
+                introModal.style.display = 'none';
+            }
+        });
+    </script>
+</head>
+<body>
+    <div id="intro-modal" style="display: block; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 1000; color: #fff; text-align: center; padding: 20px; overflow-y: auto;">
+        <div style="background: #fff; color: #000; padding: 20px; border-radius: 8px; max-width: 600px; width: 90%; margin: 50px auto; text-align: left;">
+            <h2>歡迎使用 TAIWANFRP 節點申請服務</h2>
+            <p>1. 這是一項免費服務，節點提供者無法從中獲得金錢收益，但可以一起做公益，幫助有需要的人。</p>
+            <p>2. TAIWANFRP 僅支持 <strong>0.63.0</strong> 版本的 frp 服務端，請勿下載錯誤的版本。</p>
+            <p>3. 請確保節點穩定運行，以確保使用者不會流失。</p>
+            <p>4. 等會將生成一個 <strong>frps.ini</strong> 設定文件，請下載對應您電腦的 frps 0.63.0 服務端。</p>
+            <p>5. 下一步，解壓縮下載的檔案，並把解壓縮文件夾中的frps放置於一個文件夾中。</p>
+            <p>6. 將 <strong>frps.ini</strong> 放置於 frps 服務端的同一文件夾，並開始執行。</p>
+            <p>7. 請確保在路由器上開啟您轉發的端口的tcp/udp和7500 tcp/udp跟7000 tcp/udp。</p>
+            <button onclick="closeIntroModal()" style="background-color: #333; color: #ffbf00; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">我已了解並同意</button>
+        </div>
+    </div>
+    <header>
+        <h1>成為TAIWANFRP節點合作夥伴</h1>
+        <div class="auth-buttons">
+            <a href="index.html">返回主畫面</a>
+        </div>
+    </header>
+    <section>
+        <form onsubmit="applyNode(event);">
+            <label for="node-name">節點名稱:</label>
+            <input type="text" id="node-name" name="node-name" required>
+            <label for="node-ip" id="node-ip-label">節點 IP:</label>
+            <input type="text" id="node-ip" name="node-ip" required placeholder="例如: 192.168.1.1">
+            <label for="node-ports">節點端口:</label>
+            <div class="input-group">
+                <input type="number" id="node-ports-start" name="node-ports-start" required placeholder="起始端口">
+                <input type="number" id="node-ports-end" name="node-ports-end" required placeholder="結束端口">
+            </div>
+            <label for="node-alias">節點英文暱稱 (提示: 申請後無法修改):</label>
+            <input type="text" id="node-alias" name="node-alias" required placeholder="僅限英文和數字">
+            <div class="domain-switch">
+                <div class="proxy-toggle" id="use-domain-toggle" onclick="toggleDomainSwitch('apply')"></div>
+                <label for="use-domain-checkbox" style="margin-left:8px;cursor:pointer;">使用免費TaiwanFRP域名</label>
+                <input type="checkbox" id="use-domain-checkbox">
+            </div>
+            <div id="custom-domain-group" style="display:none;">
+                <div class="domain-input-group">
+                    <input type="text" id="custom-domain" name="custom-domain" placeholder="例如: tw-1" maxlength="32" oninput="validateCustomDomain(this)">
+                    <span>.taiwanfrp.me</span>
+                </div>
+                <div id="custom-domain-error" class="domain-error" style="display:none;"></div>
+                <button type="button" style="margin-top:4px;margin-bottom:8px;" onclick="window.open('https://taiwanfrp.ddns.net/docs_html/ddns_api.html','_blank')">參考DDNS文檔</button>
+            </div>
+            <button type="submit">提交申請</button>
+        </form>
+    </section>
+    <section id="node-section">
+        <h2>已審核節點</h2>
+        <div id="approved-nodes" style="margin-bottom: 20px;">
+            <!-- Approved nodes will be dynamically inserted here -->
+        </div>
+        <h2>待審核節點</h2>
+        <div id="pending-nodes">
+            <!-- Pending nodes will be dynamically inserted here -->
+        </div>
+    </section>
+    <div id="overlay"></div>
+    <div id="success-popup">
+        <h2>節點申請成功</h2>
+        <p>
+            下一步，下載 frps 節點 網址:
+            <a href="https://github.com/fatedier/frp/releases/tag/v0.63.0" target="_blank" onclick="handleDownloadClick()">https://github.com/fatedier/frp/releases/tag/v0.63.0</a>。
+        </p>
+        <button onclick="closePopup()">關閉</button>
+    </div>
+    <div id="frps-popup" style="display: none;">
+        <div style="background: rgba(255, 255, 255, 0.9); padding: 20px; border-radius: 8px; text-align: center; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1001; width: 95%; max-width: 600px; overflow-y: auto !important; max-height: 80vh !important;">
+            <h2>frps.ini 預覽</h2>
+            <pre id="frps-content" style="background: #333; color: #ffbf00; padding: 10px; border-radius: 4px; text-align: left; overflow-x: auto;"></pre>
+            <a id="download-link" download="frps.ini" style="display: inline-block; margin-top: 10px; padding: 10px 20px; background-color: #333; color: #ffbf00; text-decoration: none; border-radius: 4px;">下載 frps.ini</a>
+            <p>將下載的 <strong>frps.ini</strong> 放入從 <a href="https://github.com/fatedier/frp/releases/tag/v0.63.0" target="_blank">frp 0.63.0</a> 下載的 frps 同一個文件夾。</p>
+            <p>接下來執行 <strong>frps</strong>，執行之後點擊 <strong>開始自動審核</strong>。</p>
+            <button onclick="closeFrpsPopup()" style="margin-top: 10px; padding: 10px 20px; background-color: #333; color: #ffbf00; border: none; border-radius: 4px; cursor: pointer;">關閉</button>
+        </div>
+        <div id="frps-overlay" style="display: block; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 1000;"></div>
+    </div>
+    <div id="edit-overlay"></div>
+    <div id="edit-popup">
+        <h2>編輯節點</h2>
+        <form onsubmit="saveNodeChanges(event);">
+            <label for="edit-node-name">節點名稱:</label>
+            <input type="text" id="edit-node-name" disabled>
+            <label for="edit-node-ip" id="edit-node-ip-label">節點 IP:</label>
+            <input type="text" id="edit-node-ip" required>
+            <label for="edit-node-ports">節點端口:</label>
+            <div class="input-group">
+                <input type="number" id="edit-node-ports-start" required placeholder="起始端口">
+                <input type="number" id="edit-node-ports-end" required placeholder="結束端口">
+            </div>
+            <label for="edit-node-owner">擁有者:</label>
+            <input type="text" id="edit-node-owner" disabled>
+            <label for="edit-node-alias">節點英文暱稱:</label>
+            <input type="text" id="edit-node-alias" disabled>
+            <div class="domain-switch">
+                <div class="proxy-toggle" id="edit-use-domain-toggle" onclick="toggleDomainSwitch('edit')"></div>
+                <label for="edit-use-domain-checkbox" style="margin-left:8px;cursor:pointer;">使用免費TaiwanFRP域名</label>
+                <input type="checkbox" id="edit-use-domain-checkbox">
+            </div>
+            <div id="edit-custom-domain-group" style="display:none;">
+                <div class="domain-input-group">
+                    <input type="text" id="edit-custom-domain" placeholder="例如: tw-1" maxlength="32" oninput="validateCustomDomain(this, true)">
+                    <span>.taiwanfrp.me</span>
+                </div>
+                <div id="edit-custom-domain-error" class="domain-error" style="display:none;"></div>
+                <button type="button" style="margin-top:4px;margin-bottom:8px;" onclick="window.open('https://taiwanfrp.ddns.net/docs_html/ddns_api.html','_blank')">參考DDNS文檔</button>
+            </div>
+            <div style="margin-top: 20px; display: flex; gap: 10px;">
+                <button type="submit" style="flex: 1;">保存</button>
+                <button type="button" onclick="closeEditPopup()" style="flex: 1;">取消</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
