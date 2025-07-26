@@ -232,7 +232,7 @@
         return data.nodes;
     }
     async function fetchNodeInfo(nodeName) {
-        const url = `/api/get_one_serverinfo?nodeName=${encodeURIComponent(nodeName)}`;
+        const url = `https://taiwanfrp.ddns.net/api/get_one_serverinfo?nodeName=${encodeURIComponent(nodeName)}`;
         const resp = await fetch(url);
         if (!resp.ok) return null;
         return await resp.json();
@@ -627,7 +627,7 @@
         if (window.history.length > 1) {
             window.history.back();
         } else {
-            window.location.href = 'https://taiwanfrp.ddns.net';
+            window.location.href = '/';
         }
     };
     </script>

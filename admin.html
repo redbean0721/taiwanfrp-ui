@@ -637,7 +637,7 @@
                 return;
             }
 
-            const ws = new WebSocket(`wss://${location.host}`);
+            const ws = new WebSocket("wss://taiwanfrp.ddns.net");
 
             ws.onopen = () => {
                 logContainer.textContent = '嘗試連接到伺服器log管理中心\n';
@@ -841,7 +841,7 @@
         async function deleteNode(name) {
             if (!confirm('確定要刪除此節點嗎？')) return;
 
-            const response = await fetch(`/admin/nodes/${name}`, {
+            const response = await fetch(`https://taiwanfrp.ddns.net/admin/nodes/${name}`, {
                 method: 'DELETE',
                 credentials: 'include'
             });
@@ -899,7 +899,7 @@
         async function deleteBetaNode(name) {
             if (!confirm('確定要刪除此測試節點嗎？')) return;
 
-            const response = await fetch(`/admin/betanodes/${name}`, {
+            const response = await fetch(`https://taiwanfrp.ddns.net/admin/betanodes/${name}`, {
                 method: 'DELETE',
                 credentials: 'include'
             });
@@ -927,7 +927,7 @@
     <header>
         <h1>管理員面板</h1>
         <div class="auth-buttons">
-            <a href="index.html">返回主畫面</a>
+            <a href="/">返回主畫面</a>
         </div>
     </header>
     <section id="verification-section">

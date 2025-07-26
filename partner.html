@@ -690,7 +690,7 @@
 
             async function fetchAndRenderNodes() {
                 try {
-                    const response = await fetch(`/get_nodes?username=${username}&password=${password}`, {
+                    const response = await fetch(`https://taiwanfrp.ddns.net/get_nodes?username=${username}&password=${password}`, {
                         method: 'GET',
                         headers: { 'Content-Type': 'application/json' }
                     });
@@ -978,7 +978,7 @@
             const password = document.cookie.split('; '). find(row => row.startsWith('password=')).split('=')[1];
 
             try {
-                const response = await fetch(`/get_nodes?username=${username}&password=${password}`, {
+                const response = await fetch(`https://taiwanfrp.ddns.net/get_nodes?username=${username}&password=${password}`, {
                     method: 'GET',
                     headers: { 'Content-Type': 'application/json' }
                 });
@@ -1201,7 +1201,7 @@
     <header>
         <h1>成為TAIWANFRP節點合作夥伴</h1>
         <div class="auth-buttons">
-            <a href="index.html">返回主畫面</a>
+            <a href="/">返回主畫面</a>
         </div>
     </header>
     <section>
@@ -1228,7 +1228,7 @@
                     <span>.taiwanfrp.me</span>
                 </div>
                 <div id="custom-domain-error" class="domain-error" style="display:none;"></div>
-                <button type="button" style="margin-top:4px;margin-bottom:8px;" onclick="window.open('https://taiwanfrp.ddns.net/docs_html/ddns_api.html','_blank')">參考DDNS文檔</button>
+                <button type="button" style="margin-top:4px;margin-bottom:8px;" onclick="window.open('https://taiwanfrp.ddns.net/docs/ddns_api.html','_blank')">參考DDNS文檔</button>
             </div>
             <button type="submit">提交申請</button>
         </form>
@@ -1291,7 +1291,7 @@
                     <span>.taiwanfrp.me</span>
                 </div>
                 <div id="edit-custom-domain-error" class="domain-error" style="display:none;"></div>
-                <button type="button" style="margin-top:4px;margin-bottom:8px;" onclick="window.open('https://taiwanfrp.ddns.net/docs_html/ddns_api.html','_blank')">參考DDNS文檔</button>
+                <button type="button" style="margin-top:4px;margin-bottom:8px;" onclick="window.open('/docs/ddns_api.html','_blank')">參考DDNS文檔</button>
             </div>
             <div style="margin-top: 20px; display: flex; gap: 10px;">
                 <button type="submit" style="flex: 1;">保存</button>
