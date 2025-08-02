@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>管理員面板-TAIWANFRP</title>
-    <link rel="icon" href="/favicon.ico" type="image/x-icon">
-    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="img/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
     <style>
         body {
             font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
-            background-image: url('./img/background.png');
+            background-image: url('img/background.png');
             background-size: cover;
             color: #fff;
         }
@@ -286,43 +286,74 @@
             }
         }
 
+        let allUsers = {};
+
+        function renderUsers(users) {
+            const userContainer = document.getElementById('user-container');
+            userContainer.innerHTML = '';
+            for (const username in users) {
+                const user = users[username];
+                const userDiv = document.createElement('div');
+                userDiv.className = 'user';
+                userDiv.innerHTML = `
+                    <h3>${username}</h3>
+                    <p>Discord: ${user.discordUsername}</p>
+                    <p>密碼: <span class="editable" contenteditable="true" data-old-password="${user.password}" onkeypress="handleKeyPress(event, '${username}')" onblur="updatePassword('${username}', this)">${user.password}</span></p>
+                    <p>最大代理數量: <span class="editable" contenteditable="true" onkeypress="handleKeyPress(event, '${username}', 'createmaxproxynum')" onblur="updateCreatemaxproxynum('${username}', this)">${user.createmaxproxynum || 0}</span></p>
+                    <p>速限 (KB): <span class="editable" contenteditable="true" onkeypress="handleKeyPress(event, '${username}', 'speed_limit')" onblur="updateSpeedLimit('${username}', this)">${user.speed_limit || '未設定'}</span></p>
+                    <p>
+                        到期日: 
+                        <label class="ios-switch">
+                            <input type="checkbox" onchange="toggleExpiration('${username}', this)" ${user.expirationDate ? 'checked' : ''}>
+                            <span class="slider"></span>
+                        </label>
+                        <input type="date" class="editable" style="display: ${user.expirationDate ? 'inline-block' : 'none'};" value="${user.expirationDate || ''}" onchange="updateExpirationDate('${username}', this)">
+                    </p>
+                    <button onclick="editTunnel('${username}')">編輯代理</button>
+                `;
+                userContainer.appendChild(userDiv);
+            }
+        }
+
         async function loadUsers() {
             const response = await fetch('https://taiwanfrp.ddns.net/get_users');
             if (response.ok) {
-                const users = await response.json();
-                const userContainer = document.getElementById('user-container');
-                userContainer.innerHTML = '';
-
-                for (const username in users) {
-                    const userDiv = document.createElement('div');
-                    userDiv.className = 'user';
-                    userDiv.innerHTML = `
-                        <h3>${username}</h3>
-                        <p>Discord: ${users[username].discordUsername}</p>
-                        <p>密碼: <span class="editable" contenteditable="true" data-old-password="${users[username].password}" onkeypress="handleKeyPress(event, '${username}')" onblur="updatePassword('${username}', this)">${users[username].password}</span></p>
-                        <p>最大代理數量: <span class="editable" contenteditable="true" onkeypress="handleKeyPress(event, '${username}', 'createmaxproxynum')" onblur="updateCreatemaxproxynum('${username}', this)">${users[username].createmaxproxynum || 0}</span></p>
-                        <p>速限 (KB): <span class="editable" contenteditable="true" onkeypress="handleKeyPress(event, '${username}', 'speed_limit')" onblur="updateSpeedLimit('${username}', this)">${users[username].speed_limit || '未設定'}</span></p>
-                        <p>
-                            到期日: 
-                            <label class="ios-switch">
-                                <input type="checkbox" onchange="toggleExpiration('${username}', this)" ${users[username].expirationDate ? 'checked' : ''}>
-                                <span class="slider"></span>
-                            </label>
-                            <input type="date" class="editable" style="display: ${users[username].expirationDate ? 'inline-block' : 'none'};" value="${users[username].expirationDate || ''}" onchange="updateExpirationDate('${username}', this)">
-                        </p>
-                        <button onclick="editTunnel('${username}')">編輯代理</button>
-                    `;
-                    userContainer.appendChild(userDiv);
-                }
+                allUsers = await response.json();
+                // 預設排序為 newest
+                const sortSelect = document.getElementById('user-sort');
+                if (sortSelect) sortSelect.value = 'newest';
+                filterAndRenderUsers();
             } else {
                 alert('無法加載使用者列表');
             }
         }
 
+        function filterAndRenderUsers() {
+            const search = document.getElementById('user-search').value.trim().toLowerCase();
+            const sort = document.getElementById('user-sort').value;
+            let usersArr = Object.entries(allUsers);
+            if (search) {
+                usersArr = usersArr.filter(([username, user]) => {
+                    return (
+                        username.toLowerCase().includes(search) ||
+                        (user.password && user.password.toLowerCase().includes(search)) ||
+                        (user.discordUsername && user.discordUsername.toLowerCase().includes(search)) ||
+                        (user.speed_limit && String(user.speed_limit).toLowerCase().includes(search)) ||
+                        (user.expirationDate && String(user.expirationDate).toLowerCase().includes(search)) ||
+                        (user.createmaxproxynum && String(user.createmaxproxynum).toLowerCase().includes(search))
+                    );
+                });
+            }
+            if (sort === 'newest') {
+                usersArr.reverse();
+            }
+            const filteredUsers = Object.fromEntries(usersArr);
+            renderUsers(filteredUsers);
+        }
+
         function handleKeyPress(event, username) {
             if (event.key === 'Enter') {
                 event.preventDefault();
-                //updatePassword(username, event.target);
                 event.target.blur();
             }
         }
@@ -606,20 +637,21 @@
                 return;
             }
 
-            const ws = new WebSocket(`wss://taiwanfrp.ddns.net`);
+            const ws = new WebSocket("wss://taiwanfrp.ddns.net");
 
             ws.onopen = () => {
                 logContainer.textContent = '嘗試連接到伺服器log管理中心\n';
             };
 
-            const maxLogs = 1000;
-
             ws.onmessage = (event) => {
+                // 將新日誌加到現有內容
                 logContainer.textContent += event.data;
-                const logs = logContainer.textContent.split('\n');
-                if (logs.length > maxLogs) {
-                    logContainer.textContent = logs.slice(-maxLogs).join('\n');
+                // 以換行分割，保留最新100條
+                let logs = logContainer.textContent.split('\n');
+                if (logs.length > 100) {
+                    logs = logs.slice(-100); // 只保留最新100條
                 }
+                logContainer.textContent = logs.join('\n');
                 logContainer.scrollTop = logContainer.scrollHeight; // Auto-scroll to the bottom
             };
 
@@ -668,6 +700,15 @@
                         }
                     }
                 });
+            }
+
+            const searchInput = document.getElementById('user-search');
+            const sortSelect = document.getElementById('user-sort');
+            if (searchInput && sortSelect) {
+                // 預設排序為 newest
+                sortSelect.value = 'newest';
+                searchInput.addEventListener('input', filterAndRenderUsers);
+                sortSelect.addEventListener('change', filterAndRenderUsers);
             }
         });
 
@@ -903,6 +944,13 @@
     </section>
     <section id="user-section" style="display: none;">
         <h2>使用者列表</h2>
+        <div style="margin-bottom: 10px;">
+            <input type="text" id="user-search" placeholder="搜尋使用者名稱、密碼、Discord、速限、到期日" style="width: 60%; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+            <select id="user-sort" style="padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+                <option value="oldest">從舊到新</option>
+                <option value="newest" selected>從新到舊</option>
+            </select>
+        </div>
         <div id="user-container"></div>
     </section>
     <section id="nodes-section" style="display: none;">
